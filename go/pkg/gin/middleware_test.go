@@ -357,3 +357,77 @@ func TestPaymentMiddleware_NetworkSelection(t *testing.T) {
 		})
 	}
 }
+
+func TestPaymentMiddleware_NetworkSelection_Polygon(t *testing.T) {
+	config := NewTestConfig()
+
+	router, w, req := setupTest(t, big.NewFloat(1.0), "0xTestAddress", config, x402gin.WithNetwork("polygon"))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusPaymentRequired, w.Code)
+
+	var response map[string]any
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	requirementsSlice, ok := response["accepts"].([]any)
+	assert.True(t, ok)
+	requirements, ok := requirementsSlice[0].(map[string]any)
+	assert.True(t, ok)
+
+	assert.Equal(t, "polygon", requirements["network"])
+	assert.Equal(t, "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359", requirements["asset"])
+}
+
+func TestPaymentMiddleware_NetworkSelection_PolygonAmoy(t *testing.T) {
+	config := NewTestConfig()
+
+	router, w, req := setupTest(t, big.NewFloat(1.0), "0xTestAddress", config, x402gin.WithNetwork("polygon-amoy"))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusPaymentRequired, w.Code)
+
+	var response map[string]any
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	requirementsSlice, ok := response["accepts"].([]any)
+	assert.True(t, ok)
+	requirements, ok := requirementsSlice[0].(map[string]any)
+	assert.True(t, ok)
+
+	assert.Equal(t, "polygon-amoy", requirements["network"])
+	assert.Equal(t, "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582", requirements["asset"])
+}
+
+func TestPaymentMiddleware_NetworkSelection_Polygon_CustomAsset(t *testing.T) {
+	config := NewTestConfig()
+
+	customAsset := "0x0000000000000000000000000000000000000001"
+	router, w, req := setupTest(
+		t,
+		big.NewFloat(1.0),
+		"0xTestAddress",
+		config,
+		x402gin.WithNetwork("polygon"),
+		x402gin.WithAsset(customAsset),
+	)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusPaymentRequired, w.Code)
+
+	var response map[string]any
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	requirementsSlice, ok := response["accepts"].([]any)
+	assert.True(t, ok)
+	requirements, ok := requirementsSlice[0].(map[string]any)
+	assert.True(t, ok)
+
+	assert.Equal(t, "polygon", requirements["network"])
+	assert.Equal(t, customAsset, requirements["asset"])
+}
