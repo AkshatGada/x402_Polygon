@@ -26,6 +26,9 @@ type PaymentMiddlewareOptions struct {
 	CustomPaywallHTML string
 	Resource          string
 	ResourceRootURL   string
+	// New fields
+	Network string
+	Asset   string
 }
 
 // Options is the type for the options for the PaymentMiddleware.
@@ -93,6 +96,20 @@ func WithResourceRootURL(resourceRootURL string) Options {
 	}
 }
 
+// WithNetwork sets a specific blockchain network key (e.g., "polygon", "polygon-amoy").
+func WithNetwork(network string) Options {
+	return func(options *PaymentMiddlewareOptions) {
+		options.Network = network
+	}
+}
+
+// WithAsset sets a specific ERC-20 token address to use as the asset (e.g., USDC address).
+func WithAsset(asset string) Options {
+	return func(options *PaymentMiddlewareOptions) {
+		options.Asset = asset
+	}
+}
+
 // PaymentMiddleware is the Gin middleware for the resource server using the x402payment protocol.
 // Amount: the decimal denominated amount to charge (ex: 0.01 for 1 cent)
 func PaymentMiddleware(amount *big.Float, address string, opts ...Options) gin.HandlerFunc {
@@ -116,9 +133,29 @@ func PaymentMiddleware(amount *big.Float, address string, opts ...Options) gin.H
 			maxAmountRequired, _ = new(big.Float).Mul(amount, big.NewFloat(1e6)).Int(nil)
 		)
 
-		if options.Testnet {
-			network = "base-sepolia"
-			usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+		// Override with explicit network/asset if provided
+		if options.Network != "" {
+			network = options.Network
+		}
+		if options.Asset != "" {
+			usdcAddress = options.Asset
+		}
+
+		// Default selection behavior when explicit overrides are not provided
+		if options.Asset == "" {
+			if options.Network == "polygon" {
+				usdcAddress = "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359"
+			} else if options.Network == "polygon-amoy" {
+				usdcAddress = "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582"
+			} else if options.Network == "" { // fall back to Base/Base-Sepolia legacy behavior
+				if options.Testnet {
+					network = "base-sepolia"
+					usdcAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+				} else {
+					network = "base"
+					usdcAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+				}
+			}
 		}
 
 		fmt.Println("Payment middleware checking request:", c.Request.URL)
