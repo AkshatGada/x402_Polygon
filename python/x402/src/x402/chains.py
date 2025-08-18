@@ -3,6 +3,8 @@ NETWORK_TO_ID = {
     "base": "8453",
     "avalanche-fuji": "43113",
     "avalanche": "43114",
+    "polygon": "137",
+    "polygon-amoy": "80002",
 }
 
 
@@ -52,6 +54,24 @@ KNOWN_TOKENS = {
         {
             "human_name": "usdc",
             "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+            "name": "USDC",
+            "decimals": 6,
+            "version": "2",
+        }
+    ],
+    "137": [
+        {
+            "human_name": "usdc",
+            "address": "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
+            "name": "USD Coin",
+            "decimals": 6,
+            "version": "2",
+        }
+    ],
+    "80002": [
+        {
+            "human_name": "usdc",
+            "address": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
             "name": "USDC",
             "decimals": 6,
             "version": "2",
