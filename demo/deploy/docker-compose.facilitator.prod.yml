@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  facilitator:
+    image: ghcr.io/akshatgada/x402-facilitator-amoy:latest
+    restart: unless-stopped
+    environment:
+      - FACILITATOR_PRIVATE_KEY=${FACILITATOR_PRIVATE_KEY}
+      - AMOY_RPC_URL=${AMOY_RPC_URL}
+      - AMOY_USDC_ADDRESS=${AMOY_USDC_ADDRESS}
+      - REAL_SETTLE=${REAL_SETTLE:-false}
+      - NODE_ENV=production
+    ports:
+      - "5401:5401"
+    networks:
+      - web
+
+  caddy:
+    image: caddy:2.7.4-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

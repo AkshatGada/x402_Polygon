@@ -1,0 +1,16 @@
+[Unit]
+Description=Facilitator Docker Compose stack (template)
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/srv/x402_polygon/demo/deploy
+EnvironmentFile=/srv/x402_polygon/demo/deploy/.env
+ExecStart=/usr/bin/docker compose -f docker-compose.facilitator.prod.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.facilitator.prod.yml down
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target 
