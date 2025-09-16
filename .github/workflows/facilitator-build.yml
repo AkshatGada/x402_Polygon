@@ -37,5 +37,6 @@ jobs:
         with:
           context: .
           file: demo/facilitator-amoy.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ steps.owner.outputs.owner_lower }}/x402-facilitator-amoy:latest 
