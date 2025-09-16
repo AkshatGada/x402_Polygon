@@ -14,3 +14,4 @@ python/x402/.venv/
 /demo/a2a.md
 /demo/a2a/frontend/a2a_frontend.md
 /demo/a2a/frontend/design.md
+/demo/.env.local
