@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  facilitator:
+    build:
+      context: ..
+      dockerfile: demo/facilitator-amoy.Dockerfile
+    image: x402/facilitator-amoy:local
+    restart: unless-stopped
+    environment:
+      - FACILITATOR_PRIVATE_KEY=${FACILITATOR_PRIVATE_KEY}
+      - AMOY_RPC_URL=${AMOY_RPC_URL}
+      - AMOY_USDC_ADDRESS=${AMOY_USDC_ADDRESS}
+      - REAL_SETTLE=${REAL_SETTLE}
+      - NODE_ENV=production
+    ports:
+      - "5401:5401"
+    volumes:
+      - /var/log/facilitator:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
