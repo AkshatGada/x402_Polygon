@@ -33,4 +33,4 @@ jobs:
           context: .
           file: demo/facilitator-amoy.Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/x402-facilitator-amoy:latest 
+          tags: ghcr.io/${{ toLower(github.repository_owner) }}/x402-facilitator-amoy:latest 
