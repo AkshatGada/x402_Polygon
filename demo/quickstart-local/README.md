@@ -40,6 +40,26 @@ node buyer.js
 - Sign a TransferWithAuthorization payload and retry the request with `X-PAYMENT` header.
 - Seller verifies the payload with the facilitator, returns the premium content, and performs settlement in background (which sends the `transferWithAuthorization` call to the chain when `REAL_SETTLE=true`).
 
+## Optional: Use hosted facilitator (requires Warp VPN)
+
+If you don't want to run a local container, a hosted facilitator is available for developers inside the Polygon VPN. This is useful for quick manual tests against a running service.
+
+```bash
+# Hosted facilitator (internal URL; accessible via Warp VPN)
+FACILITATOR_HOSTED_URL="https://x402-demo.development.polygon.internal"
+
+# Verify health
+curl -sS -D - "$FACILITATOR_HOSTED_URL/healthz" | cat
+
+# Inspect supported networks
+curl -sS -D - "$FACILITATOR_HOSTED_URL/supported" | cat
+```
+
+Notes:
+- The hosted demo is reachable only from within Polygon's Warp VPN. Ensure Warp is connected before attempting requests.
+- The hosted service behaves the same as the local Docker image and exposes `/supported`, `/verify`, `/settle`, and `/healthz`.
+- The hosted instance may be configured differently (for example, `REAL_SETTLE` may be enabled). Use demo credentials and avoid sending production secrets.
+
 Full technical details and flow
 -------------------------------
 1. Seller exposes `POST /premium/summarize`. If there's no `X-PAYMENT` header the seller returns `HTTP 402` and an `accepts` array that describes payment requirements (scheme `exact`, network `polygon-amoy`, asset address, decimals, payTo address, and maxAmountRequired in atomic units).
