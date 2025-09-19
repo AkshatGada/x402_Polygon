@@ -36,6 +36,26 @@ curl http://localhost:5401/healthz
 # 4. Integrate with your Express app using x402-express middleware
 ```
 
+## Optional: Use hosted facilitator (requires Warp VPN)
+
+If you don't want to run a local container, a hosted facilitator is available for developers inside the Polygon VPN. This is useful for quick manual tests against a running service.
+
+```bash
+# Hosted facilitator (internal URL; accessible via Warp VPN)
+FACILITATOR_HOSTED_URL="https://x402-demo.development.polygon.internal"
+
+# Verify health
+curl -sS -D - "$FACILITATOR_HOSTED_URL/healthz" | cat
+
+# Inspect supported networks
+curl -sS -D - "$FACILITATOR_HOSTED_URL/supported" | cat
+```
+
+Notes:
+- The hosted demo is reachable only from within Polygon's Warp VPN. If you are on the Polygon network, ensure Warp is connected before attempting requests.
+- The hosted service behaves the same as the local Docker image and exposes `/supported`, `/verify`, `/settle`, and `/healthz`.
+- For safety the hosted instance may be configured differently (for example, `REAL_SETTLE` may be enabled). Use demo credentials and avoid sending production secrets.
+
 ## Docker Image Details
 
 **Published Image:** `ghcr.io/akshatgada/x402-facilitator-amoy:latest`
