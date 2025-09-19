@@ -64,7 +64,7 @@ docker pull --platform=linux/amd64 ghcr.io/akshatgada/x402-facilitator-amoy:late
 Launch the facilitator container with the required environment variables:
 
 ```bash
-docker run --rm -d --name facilitator-dev \
+docker run --rm -d --name facilitator \
   -e FACILITATOR_PRIVATE_KEY="<YOUR_FACILITATOR_PRIVATE_KEY>" \
   -e AMOY_RPC_URL="https://your-amoy-rpc" \
   -e AMOY_USDC_ADDRESS="0x..." \
@@ -168,13 +168,13 @@ curl -X POST http://localhost:8080/premium/summarize
 
 Use a demo client or construct a valid `X-PAYMENT` header to complete the payment flow and access the protected resource.
 
-## Step 5: Enable Production Settlement
+## Step 5: Enable Real Settlement
 
 For production or testing with actual blockchain transactions:
 
 1. **Enable real settlement:**
    ```bash
-   docker run --rm -d --name facilitator-prod \
+   docker run --rm -d --name facilitator \
      -e FACILITATOR_PRIVATE_KEY="<YOUR_FACILITATOR_PRIVATE_KEY>" \
      -e AMOY_RPC_URL="https://your-amoy-rpc" \
      -e AMOY_USDC_ADDRESS="0x..." \
