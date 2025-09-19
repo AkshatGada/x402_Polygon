@@ -2,9 +2,9 @@ name: Build and publish facilitator image
 
 on:
   push:
-    branches:
-      - main
-      - feature/facilitator-amoy
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch: {}
 
 jobs:
   build:
