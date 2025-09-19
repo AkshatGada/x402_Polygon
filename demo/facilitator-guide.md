@@ -122,6 +122,36 @@ app.listen(8080, () => {
 });
 ```
 
+## Endpoints
+
+The facilitator exposes the following HTTP endpoints. Use these to verify, settle, and probe health/status.
+
+- **GET `/supported`**
+  - Purpose: advertise supported networks and schemes.
+  - Response: JSON `{ networks: [{ name: 'polygon-amoy', chainId: 80002, schemes: ['exact'] }] }`.
+
+- **POST `/verify`**
+  - Purpose: validate a payment payload's chain, validity window, nonce replay, and signature.
+  - Input: a base64-encoded JSON payment payload supplied either as the JSON body field `paymentPayloadBase64` or the HTTP header `x-payment`.
+  - Behavior: decodes payload → checks `chainId===80002`, `validAfter`/`validBefore`, and verifies signature (EIP‑712 typed-data then fallback to raw hash). Does not mark nonce used (nonce is marked only on `/settle`).
+  - Success response: `200 { success: true }`.
+  - Failure response: `400 { success: false, errors: [...] }` with errors like `invalid_chain`, `not_yet_valid`, `expired`, `nonce_replay`, `signature_mismatch`, `signature_verification_failed`.
+
+- **POST `/settle`**
+  - Purpose: perform settlement for a verified payment payload and (optionally) broadcast an on-chain transaction.
+  - Input: same as `/verify` (body `paymentPayloadBase64` or header `x-payment`).
+  - Behavior: checks for nonce replay, marks nonce used (in-memory), and if `REAL_SETTLE=true` *and* `AMOY_RPC_URL` and `FACILITATOR_PRIVATE_KEY` are set, calls the token's `transferWithAuthorization` (EIP-3009) on `AMOY_USDC_ADDRESS`. The token ABI used includes `transferWithAuthorization(address,address,uint256,uint256,uint256,bytes32,bytes)`.
+  - Success response: `200 { success: true, transaction: <txHash|null> }`. The response is also encoded and set in the `X-PAYMENT-RESPONSE` header as base64(JSON) containing `{ success, transaction, network, payer }`.
+  - Failure response: `500 { success: false, errors: [...] }` for RPC/settle errors.
+
+- **GET `/healthz`**
+  - Purpose: simple uptime/monitoring check.
+  - Response: `200 { ok: true }`.
+
+Notes:
+- The in-memory nonce store is not persistent; restart will clear used-nonces. For production, use a persistent store like Redis or a DB.
+- Always run the facilitator behind TLS when exposing publicly. Use a reverse proxy (Caddy/nginx) for certs and TLS termination.
+
 ## Step 4: Test the Payment Flow
 
 ### Test Without Payment Header
@@ -159,3 +189,27 @@ For production or testing with actual blockchain transactions:
 
 
 This guide provides a complete setup for local development and testing with the x402 facilitator. The public package availability makes it easy for any developer to get started without authentication requirements.
+
+## Tests
+
+You can run the smoke tests and integration test suite to verify the published Docker image and endpoints.
+
+- Smoke tests (quick): pull and run the container, then curl the endpoints:
+
+```bash
+docker pull ghcr.io/akshatgada/x402-facilitator-amoy:latest
+docker run --rm -d --name facilitator-test -e FACILITATOR_PRIVATE_KEY="<KEY>" -e AMOY_RPC_URL="<RPC>" -e AMOY_USDC_ADDRESS="<ADDR>" -e REAL_SETTLE=false -p 5401:5401 ghcr.io/akshatgada/x402-facilitator-amoy:latest
+curl http://localhost:5401/healthz
+curl http://localhost:5401/supported
+```
+
+- Automated test suite (recommended): tests are located in `demo/tests/facilitator`. Install Node dev deps at repo root (`npm install` or `pnpm`) and run:
+
+```bash
+cd demo
+node ./tests/facilitator/run-tests.js
+```
+
+The test suite performs requests against `http://localhost:5401` and validates `/supported`, `/verify`, `/settle`, and `/healthz` behavior. It uses a local unsigned test payload for negative/positive assertions.
+
+Note: the test runner does not broadcast real transactions; `REAL_SETTLE` should be `false` during tests unless you intentionally want on-chain effects.
