@@ -1,88 +1,183 @@
-# Quickstart Local — x402 Polygon Amoy demo
+# x402 Developer Guide - Polygon Amoy Facilitator
 
-This directory contains seller/buyer scripts to exercise the x402 payment flow locally against the demo facilitator for the Polygon Amoy test network.
+## What is x402?
 
-- Seller : `seller.js` — a minimal resource server that returns HTTP 402 when no payment is provided, accepts `X-PAYMENT` headers, verifies with the facilitator, and performs settlement in the background.
-- Buyer : `buyer.js` — a buyer client that polls the seller for readiness, requests the protected resource, constructs and signs a TransferWithAuthorization payment payload with the buyer key in `demo/.env.local`, and retries the resource with the `X-PAYMENT` header.
+x402 is an HTTP-native micropayments protocol that enables instant, automatic stablecoin payments directly over HTTP. By using the HTTP 402 Payment Required status code, x402 allows services to:
+- Monetize APIs and digital content on-chain
+- Enable programmatic payments without accounts or sessions
+- Support both human and AI agent interactions
 
-Context
--------
-x402 is an HTTP-native micropayments protocol. A seller protects a resource by returning HTTP 402 with `accepts` payment requirements. Buyers create signed EIP-3009 TransferWithAuthorization payloads that an on-chain facilitator can verify and optionally execute (settle). The facilitator exposes `/verify` and `/settle` endpoints.
+## Quick Start with x402 
 
-Quickstart (local)
-------------------
-1. Ensure `demo/.env.local` contains your keys and RPC URLs. We added `QUICKSTART_RESOURCE_URL=http://localhost:8080` so the quickstart scripts can autodetect the seller URL.
+This guide shows how to quickly integrate x402 payments using the x402 helper packages and the Polygon facilitator.
 
-2. Start the facilitator (example):
+### Prerequisites
+
+1. Node.js installed
+2. A wallet with USDC on Polygon Amoy testnet (the facilitator handles gas fees)
+3. Basic familiarity with Express.js (for sellers)
+
+### Step 1: Project Setup
 
 ```bash
-# from repo root
-# make sure REAL_SETTLE=false for local testing unless you want real on-chain txs
-docker run --rm -d --name facilitator-test \
-  -e FACILITATOR_PRIVATE_KEY="<SETTLER_KEY>" \
-  -e AMOY_RPC_URL="<RPC>" \
-  -e AMOY_USDC_ADDRESS="<USDC_ADDRESS>" \
-  -e REAL_SETTLE=false \
-  -p 5401:5401 ghcr.io/akshatgada/x402-facilitator-amoy:latest
+# Create a new directory and initialize
+mkdir x402-demo && cd x402-demo
+npm init -y
+
+# Install required packages
+npm install express x402-express x402-fetch ethers@^6.0.0
 ```
 
-3. Start the seller and run the buyer quickstart (from this folder):
+### Step 2: Configure Environment
 
+Create a `.env` file:
+
+```env
+# Your wallet private key (for signing payments)
+PRIVATE_KEY=your_private_key_here
+
+# The Polygon facilitator URL (no need to change)
+FACILITATOR_URL=https://x402.polygon.technology
+
+# Your receiving address (for sellers)
+PAYMENT_ADDRESS=0xYourPolygonAddress
+```
+
+### Step 3: Create a Seller Service
+
+Create `seller.js`:
+
+```javascript
+import express from "express";
+import { paymentMiddleware } from "x402-express";
+
+const app = express();
+
+app.use(paymentMiddleware(
+  process.env.PAYMENT_ADDRESS, // your receiving wallet address
+  {  
+    "GET /weather": {
+      price: "$0.001",  // USDC amount in dollars
+      network: "polygon-amoy",
+      config: {
+        description: "Get current weather data",
+        inputSchema: {
+          type: "object",
+          properties: {
+            location: { type: "string" }
+          }
+        }
+      }
+    },
+  },
+  {
+    url: process.env.FACILITATOR_URL || "https://x402.polygon.technology",
+  }
+));
+
+app.get("/weather", (req, res) => {
+  res.json({
+    weather: "sunny",
+    temperature: 70,
+  });
+});
+
+app.listen(4021, () => {
+  console.log(`Seller running on http://localhost:4021`);
+});
+```
+
+### Step 4: Create a Buyer Client
+
+Create `buyer.js`:
+
+```javascript
+import { wrapFetchWithPayment, decodeXPaymentResponse } from "x402-fetch";
+
+const account = process.env.PRIVATE_KEY;
+const fetchWithPayment = wrapFetchWithPayment(fetch, account);
+
+fetchWithPayment("http://localhost:4021/weather", {
+  method: "GET",
+})
+  .then(async response => {
+    const data = await response.json();
+    console.log("Response:", data);
+
+    const paymentResponse = decodeXPaymentResponse(
+      response.headers.get("x-payment-response")
+    );
+    console.log("Payment details:", paymentResponse);
+  })
+  .catch(error => {
+    console.error("Error:", error.response?.data?.error || error.message);
+  });
+```
+
+### Step 5: Run the Demo
+
+1. Start the seller:
 ```bash
-cd demo/quickstart-local
-node seller.js &
+node seller.js
+```
+
+2. In a new terminal, run the buyer:
+```bash
 node buyer.js
 ```
 
-4. The buyer will:
-- Poll the seller `/healthz` for readiness.
-- Call `POST /premium/summarize` → receive 402 with `accepts`.
-- Sign a TransferWithAuthorization payload and retry the request with `X-PAYMENT` header.
-- Seller verifies the payload with the facilitator, returns the premium content, and performs settlement in background (which sends the `transferWithAuthorization` call to the chain when `REAL_SETTLE=true`).
+The buyer will:
+1. Make initial request to `/weather`
+2. Receive 402 with payment requirements
+3. Sign an EIP-3009 payment authorization
+4. Retry with payment header
+5. Receive weather data and payment confirmation
 
-## Optional: Use hosted facilitator (requires Warp VPN)
+## How It Works
 
-If you don't want to run a local container, a hosted facilitator is available for developers inside the Polygon VPN. This is useful for quick manual tests against a running service.
+1. **Seller Flow**:
+   - Uses `x402-express` middleware to protect routes
+   - Configures prices in USD (converted to USDC)
+   - Returns 402 + payment requirements when no payment
+   - Verifies payments via Polygon facilitator
+   - Returns content after verification
 
-```bash
-# Hosted facilitator (internal URL; accessible via Warp VPN)
-FACILITATOR_HOSTED_URL="https://x402-demo.development.polygon.internal"
+2. **Buyer Flow**:
+   - Uses `x402-fetch` to wrap fetch calls
+   - Automatically handles 402 responses
+   - Signs payment authorizations using provided wallet
+   - Retries requests with payment headers
+   - Decodes payment confirmations
 
-# Verify health
-curl -sS -D - "$FACILITATOR_HOSTED_URL/healthz" | cat
+3. **Facilitator's Role**:
+   - Validates payment authorizations
+   - Handles nonce tracking and replay protection
+   - Executes on-chain settlement (EIP-3009)
+   - Covers all gas fees for transactions
+   - Returns transaction hashes and receipts
 
-# Inspect supported networks
-curl -sS -D - "$FACILITATOR_HOSTED_URL/supported" | cat
-```
+## Notes and Best Practices
 
-Notes:
-- The hosted demo is reachable only from within Polygon's Warp VPN. Ensure Warp is connected before attempting requests.
-- The hosted service behaves the same as the local Docker image and exposes `/supported`, `/verify`, `/settle`, and `/healthz`.
-- The hosted instance may be configured differently (for example, `REAL_SETTLE` may be enabled). Use demo credentials and avoid sending production secrets.
+- Always use testnet (Polygon Amoy) for development
+- Keep private keys secure and never commit them
+- Set reasonable payment amounts for testing
+- Monitor the `x-payment-response` header for transaction status
+- Consider implementing receipt verification for high-value endpoints
 
-Full technical details and flow
--------------------------------
-1. Seller exposes `POST /premium/summarize`. If there's no `X-PAYMENT` header the seller returns `HTTP 402` and an `accepts` array that describes payment requirements (scheme `exact`, network `polygon-amoy`, asset address, decimals, payTo address, and maxAmountRequired in atomic units).
+## Troubleshooting
 
-2. Buyer creates a `PaymentPayload` matching the exact/EIP-3009 scheme:
-- Fields: `from`, `to`, `value`, `validAfter`, `validBefore`, `nonce`, `verifyingContract`, `chainId`, `signature`.
-- Buyer signs typed data using EIP-712 / TransferWithAuthorization typed structure.
+- Ensure your wallet has sufficient USDC on Polygon Amoy testnet
+- Check facilitator health: `curl https://x402.polygon.technology/healthz`
+- Verify network support: `curl https://x402.polygon.technology/supported`
+- For local testing, use smaller amounts (e.g. $0.001)
 
-3. Buyer retries the request with `X-PAYMENT: <base64(JSON PaymentPayload)>` header.
+## Next Steps
 
-4. Seller receives `X-PAYMENT`, forwards the base64 payload to the facilitator's `/verify` endpoint to validate signature, chainId, time window, and replay protection. If verify fails seller returns 402/400.
+- Add error handling and retries
+- Implement receipt verification
+- Add support for multiple payment schemes
+- Consider implementing webhook notifications
+- Move to production when ready
 
-5. If verify succeeds, seller returns the premium content immediately to the buyer and initiates settlement by calling facilitator `/settle` (in this repo we run settle in the background to avoid nonce_replay on retry). The facilitator (if `REAL_SETTLE=true`) calls the EIP-3009 token contract `transferWithAuthorization` using the facilitator's private key and RPC endpoint.
-
-6. Facilitator responds with either `{ success: true, transaction: <txHash> }` (on success) or error details. The seller can capture the `X-PAYMENT-RESPONSE` header returned by the facilitator and surface it to the buyer if desired.
-
-Notes and gotchas
------------------
-- Nonce handling: The demo facilitator uses an in-memory nonce store. In production use a persistent store (Redis) to avoid replay on restarts and coordinate between servers.
-- For running real on-chain settlement set `REAL_SETTLE=true` and ensure the facilitator account has POL on Amoy.
-
-Files
------
-- `seller.js` — custom demo seller (handles verify/settle flow)
-- `buyer.js` — buyer script (axios-only flow)
+For more details, see the [x402 Protocol Documentation](https://docs.x402.org).
 
