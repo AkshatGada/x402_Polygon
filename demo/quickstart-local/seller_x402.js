@@ -1,11 +1,11 @@
 import express from "express";
-import { paymentMiddleware, Network } from "x402-express";
+import { paymentMiddleware } from "x402-express";
 // import { facilitator } from "@coinbase/x402"; // For mainnet
 
 const app = express();
 
 app.use(paymentMiddleware(
-  "0xYourAddress", // your receiving wallet address
+  "0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00", // receiving wallet address
   {  // Route configurations for protected endpoints
     "GET /weather": {
       // USDC amount in dollars
@@ -31,7 +31,7 @@ app.use(paymentMiddleware(
     },
   },
   {
-    url: process.env.FACILITATOR_URL || "https://x402.polygon.technology", // Polygon facilitator
+    url: process.env.FACILITATOR_URL || "https://x402.polygon.technology", // Polygon Amoy facilitator
   }
 ));
 
