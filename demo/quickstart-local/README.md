@@ -138,6 +138,26 @@ The buyer will:
 
 ## How It Works
 
+### Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant B as Buyer
+    participant S as Seller
+    participant F as Facilitator
+
+    B->>S: 1. GET /weather
+    S->>B: 2. 402 Payment Required + Requirements
+    B->>F: 3. Request payment verification
+    Note over B,F: Signs EIP-3009 authorization
+    F->>B: 4. Payment verification token
+    B->>S: 5. GET /weather with payment header
+    S->>F: 6. Verify payment
+    F->>S: 7. Payment valid
+    S->>B: 8. Return weather data + payment receipt
+    Note over F: Later: Settles payment on-chain
+```
+
 1. **Seller Flow**:
    - Uses `x402-express` middleware to protect routes
    - Configures prices in USD (converted to USDC)
