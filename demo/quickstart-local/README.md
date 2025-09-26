@@ -15,6 +15,9 @@ This guide shows how to quickly integrate x402 payments using the x402 helper pa
 
 1. Node.js installed
 2. A wallet with USDC on Polygon Amoy testnet (the facilitator handles gas fees)
+   - Get testnet USDC from [Circle's Faucet](https://faucet.circle.com/)
+   - Select "Polygon PoS Amoy" from the network dropdown
+   - You can request 10 USDC per hour per address
 3. Basic familiarity with Express.js (for sellers)
 
 ### Step 1: Project Setup
