@@ -4,10 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { polygonAmoy } from 'viem/chains';
 import 'dotenv/config';
 
-const privateKey = process.env.PRIVATE_KEY;
-if (!privateKey) {
-  throw new Error("PRIVATE_KEY not set in .env file");
-}
+const privateKey = 'c54698db0aca65242f49e5e84485d859c0fa41ee7a075d741eaa811da4b441c9';
 
 const account = privateKeyToAccount(`0x${privateKey}`);
 const client = createWalletClient({
@@ -50,7 +47,7 @@ async function makeRequest(id) {
 }
 
 // Run 5 requests with slight delays
-const NUM_REQUESTS = 10;
+const NUM_REQUESTS = 5;
 const DELAY_MS = 0; // No delay - true concurrent requests
 console.log(`Starting ${NUM_REQUESTS} requests with ${DELAY_MS}ms delay between them...`);
 

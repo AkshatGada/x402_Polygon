@@ -36,7 +36,7 @@ fetchWithPayment(url, { //url should be something like https://api.example.com/p
       console.log('All response headers:', Object.fromEntries(response.headers.entries()));
       const rawPaymentResponse = response.headers.get("x-payment-response");
       console.log('Raw x-payment-response:', rawPaymentResponse);
-      
+
       try {
         const paymentResponse = decodeXPaymentResponse(rawPaymentResponse);
         console.log('Decoded payment response:', paymentResponse);

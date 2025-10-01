@@ -35,23 +35,134 @@ async function makeRequest(wallet, id) {
     const fetchWithPayment = wrapFetchWithPayment(fetch, client);
 
     console.log(`[Wallet ${id}] Starting request from ${wallet.address}`);
+    console.log(`[Wallet ${id}] Making request to facilitator...`);
+
+    console.log(`[Wallet ${id}] Sending payment request to ${url}`);
+    // First request to get payment requirements
+    const initialResponse = await fetch(url, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'x-debug': 'true'
+      }
+    });
+    console.log(`[Wallet ${id}] Initial response status:`, initialResponse.status);
+    console.log(`[Wallet ${id}] Initial headers:`, Object.fromEntries(initialResponse.headers.entries()));
+    const initialBody = await initialResponse.json();
+    console.log(`[Wallet ${id}] Initial body:`, JSON.stringify(initialBody, null, 2));
+
+    // Payment request
+    console.log(`[Wallet ${id}] Initiating payment...`);
     const response = await fetchWithPayment(url, {
       method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'x-debug': 'true',
+        'x-payment-debug': 'true'
+      }
     });
+
+    console.log(`[Wallet ${id}] Response status:`, response.status);
+    console.log(`[Wallet ${id}] Response headers:`, Object.fromEntries(response.headers.entries()));
 
     const body = await response.json();
     console.log(`[Wallet ${id}] Response body:`, body);
 
     if (body.report) {
       const rawPaymentResponse = response.headers.get("x-payment-response");
+      console.log(`[Wallet ${id}] Raw payment response:`, rawPaymentResponse);
+
       const paymentResponse = decodeXPaymentResponse(rawPaymentResponse);
-      console.log(`[Wallet ${id}] Payment confirmed:`, paymentResponse);
+      console.log(`[Wallet ${id}] Decoded payment response:`, paymentResponse);
       return { success: true, id, wallet: wallet.address, txHash: paymentResponse.transaction };
     }
-    return { success: false, id, wallet: wallet.address, error: 'No payment response' };
+
+    // Enhanced error logging
+    console.log(`[Wallet ${id}] Response type:`, body.x402Version ? 'x402' : 'unknown');
+
+    if (body.error) {
+      console.log(`[Wallet ${id}] Server error details:`, JSON.stringify(body.error, null, 2));
+    }
+
+    if (body.accepts) {
+      console.log(`[Wallet ${id}] Payment requirements:`, JSON.stringify(body.accepts, null, 2));
+      console.log(`[Wallet ${id}] Required asset:`, body.accepts[0]?.asset);
+      console.log(`[Wallet ${id}] Required amount:`, body.accepts[0]?.maxAmountRequired);
+      console.log(`[Wallet ${id}] Payment recipient:`, body.accepts[0]?.payTo);
+    }
+
+    // Log any debug info
+    const debugInfo = response.headers.get("x-debug-info");
+    if (debugInfo) {
+      console.log(`[Wallet ${id}] Debug info:`, debugInfo);
+    }
+
+    return {
+      success: false,
+      id,
+      wallet: wallet.address,
+      error: 'No payment response',
+      details: {
+        status: response.status,
+        headers: Object.fromEntries(response.headers.entries()),
+        body: body
+      }
+    };
   } catch (error) {
-    console.error(`[Wallet ${id}] Error:`, error.message);
-    return { success: false, id, wallet: wallet.address, error: error.message };
+    console.error(`\n[Wallet ${id}] ====== ERROR DETAILS ======`);
+    console.error(`[Wallet ${id}] Error type:`, error.constructor.name);
+    console.error(`[Wallet ${id}] Error message:`, error.message);
+    console.error(`[Wallet ${id}] Error location:`, error.stack?.split('\n')[1]?.trim() || 'Unknown');
+
+    // Log detailed error information
+    if (error.response) {
+      try {
+        console.error(`[Wallet ${id}] Error response status:`, error.response.status);
+        console.error(`[Wallet ${id}] Error response headers:`, error.response.headers);
+        const errorBody = await error.response.text();
+        try {
+          // Try to parse as JSON for better formatting
+          const jsonBody = JSON.parse(errorBody);
+          console.error(`[Wallet ${id}] Error response body:`, JSON.stringify(jsonBody, null, 2));
+        } catch {
+          console.error(`[Wallet ${id}] Error response body (raw):`, errorBody);
+        }
+      } catch (e) {
+        console.error(`[Wallet ${id}] Could not parse error response:`, e.message);
+      }
+    }
+
+    // Log cause if available
+    if (error.cause) {
+      console.error(`[Wallet ${id}] Error cause:`, {
+        type: error.cause.constructor.name,
+        message: error.cause.message,
+        code: error.cause.code,
+        stack: error.cause.stack
+      });
+    }
+
+    // Log stack trace
+    console.error(`[Wallet ${id}] Stack trace:`, error.stack);
+    console.error(`[Wallet ${id}] ========================`);
+
+    return {
+      success: false,
+      id,
+      wallet: wallet.address,
+      error: error.message,
+      errorType: error.constructor.name,
+      errorDetails: {
+        type: error.constructor.name,
+        message: error.message,
+        cause: error.cause ? {
+          type: error.cause.constructor.name,
+          message: error.cause.message,
+          code: error.cause.code
+        } : undefined,
+        stack: error.stack
+      }
+    };
   }
 }
 
