@@ -40,7 +40,7 @@ Create a `.env` file:
 PRIVATE_KEY=your_private_key_here
 
 # The Polygon facilitator URL (no need to change)
-FACILITATOR_URL=https://x402.polygon.technology
+FACILITATOR_URL=https://x402-amoy.polygon.technology
 
 # Your receiving address (for sellers)
 PAYMENT_ADDRESS=0xYourPolygonAddress
@@ -74,7 +74,7 @@ app.use(paymentMiddleware(
     },
   },
   {
-    url: process.env.FACILITATOR_URL || "https://x402.polygon.technology",
+    url: process.env.FACILITATOR_URL || "https://x402-amoy.polygon.technology",
   }
 ));
 
