@@ -31,7 +31,7 @@ app.use(paymentMiddleware(
     },
   },
   {
-    url: process.env.FACILITATOR_URL || "https://x402.polygon.technology", // Polygon Amoy facilitator
+    url: process.env.FACILITATOR_URL || "https://x402-amoy.polygon.technology", // Polygon Amoy facilitator
   }
 ));
 

@@ -18,7 +18,7 @@ const client = createWalletClient({
 
 console.log("Using wallet address:", account.address);
 
-const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://x402.polygon.technology";
+const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://x402-amoy.polygon.technology";
 
 const fetchWithPayment = wrapFetchWithPayment(fetch, client);
 
