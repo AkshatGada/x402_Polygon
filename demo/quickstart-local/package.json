@@ -4,20 +4,27 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start:seller": "node seller.js",
-    "run:buyer": "node buyer.js",
+    "start:seller": "node seller_x402.js",
+    "start:seller:router": "node seller_x402_with_router.js",
+    "run:buyer": "node buyer_x402.js",
     "test:endpoints": "node test_endpoints.js"
   },
   "dependencies": {
+    "@coinbase/cdp-sdk": "^1.38.3",
     "axios": "^1.12.2",
     "body-parser": "^1.20.2",
     "dotenv": "^17.2.2",
-    "ethers": "^6.15.0",
+    "ethers": "^5.8.0",
     "express": "^4.18.2",
     "node-fetch": "^3.3.2",
+    "thirdweb": "^5.0.0",
     "viem": "^2.37.6",
     "x402": "^0.6.5",
     "x402-express": "^0.6.5",
     "x402-fetch": "^0.6.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "playwright": "^1.56.0"
   }
 }

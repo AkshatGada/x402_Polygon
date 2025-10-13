@@ -4,8 +4,19 @@ import { paymentMiddleware } from "x402-express";
 
 const app = express();
 
+const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://facilitator.payai.network";
+
+console.log("=".repeat(80));
+console.log("🚀 X402 Seller Server Configuration");
+console.log("=".repeat(80));
+console.log(`📍 Facilitator URL: ${FACILITATOR_URL}`);
+console.log(`💰 Receiving Wallet: 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00`);
+console.log(`🌐 Network: polygon-amoy`);
+console.log(`💵 Price: $0.001 USDC`);
+console.log("=".repeat(80));
+
 app.use(paymentMiddleware(
-  "0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00", // receiving wallet address
+  "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // receiving wallet address
   {  // Route configurations for protected endpoints
     "GET /weather": {
       // USDC amount in dollars
@@ -31,7 +42,7 @@ app.use(paymentMiddleware(
     },
   },
   {
-    url: process.env.FACILITATOR_URL || "https://x402-amoy.polygon.technology", // Polygon Amoy facilitator
+    url: FACILITATOR_URL,
   }
 ));
 

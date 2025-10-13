@@ -1,0 +1,38 @@
+{
+  "name": "@polygon/x402-router",
+  "version": "1.0.0",
+  "description": "Intelligent router for x402 facilitators on Polygon - automatic failover and load balancing",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "x402",
+    "polygon",
+    "facilitator",
+    "router",
+    "payments",
+    "load-balancer",
+    "failover"
+  ],
+  "author": "Polygon Labs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "jest": "^29.7.0",
+    "typescript": "^5.3.3"
+  }
+}

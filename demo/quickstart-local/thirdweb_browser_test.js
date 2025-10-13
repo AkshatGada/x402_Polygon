@@ -1,0 +1,185 @@
+import { chromium } from 'playwright';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+async function runBrowserTest() {
+  console.log("=".repeat(80));
+  console.log("🚀 Starting Thirdweb Browser-based X402 Test");
+  console.log("=".repeat(80));
+
+  const browser = await chromium.launch({ headless: false }); // Set to true for headless mode
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  try {
+    // Create an HTML file with the test code
+    const testHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Thirdweb X402 Test</title>
+        <script type="module">
+          import { wrapFetchWithPayment } from "thirdweb/x402";
+          import { createThirdwebClient } from "thirdweb";
+          import { createWallet } from "thirdweb/wallets";
+          import { polygon } from "thirdweb/chains";
+
+          // Test function
+          async function runTest() {
+            const resultDiv = document.getElementById('result');
+            const logDiv = document.getElementById('log');
+
+            function log(message) {
+              logDiv.innerHTML += message + '<br>';
+              console.log(message);
+            }
+
+            try {
+              log("1️⃣  Creating Thirdweb client...");
+              const client = createThirdwebClient({
+                clientId: "7493f6d4557319f150c87939456e61df"
+              });
+              log("✅ Client created");
+
+              log("2️⃣  Creating wallet...");
+              const wallet = createWallet("local");
+              log("✅ Wallet instance created");
+
+              log("3️⃣  Connecting wallet...");
+              await wallet.connect({
+                client,
+                chain: polygon,
+                personalWallet: {
+                  type: "local",
+                  config: {
+                    privateKey: "c54698db0aca65242f49e5e84485d859c0fa41ee7a075d741eaa811da4b441c9"
+                  }
+                }
+              });
+              log("✅ Wallet connected");
+
+              log("4️⃣  Wrapping fetch with payment...");
+              const fetchWithPay = wrapFetchWithPayment(fetch, client, wallet);
+              log("✅ Fetch wrapped");
+
+              const url = 'http://localhost:4021/weather';
+
+              log("5️⃣  Making initial request...");
+              const initialResponse = await fetch(url, {
+                method: "GET",
+                headers: {
+                  'Accept': 'application/json'
+                }
+              });
+              
+              log(\`   Status: \${initialResponse.status}\`);
+              const initialBody = await initialResponse.json();
+              log(\`   Response: \${JSON.stringify(initialBody, null, 2)}\`);
+
+              log("6️⃣  Making payment request...");
+              const response = await fetchWithPay(url, {
+                method: "GET",
+                headers: {
+                  'Accept': 'application/json'
+                }
+              });
+
+              log(\`   Status: \${response.status}\`);
+              const headers = Object.fromEntries(response.headers.entries());
+              log(\`   Headers: \${JSON.stringify(headers, null, 2)}\`);
+              
+              const body = await response.json();
+              log(\`   Response body: \${JSON.stringify(body, null, 2)}\`);
+
+              if (body.report) {
+                log("✅ SUCCESS! Payment completed and resource accessed!");
+                log(\`Weather Report: \${JSON.stringify(body.report, null, 2)}\`);
+                
+                const paymentResponse = response.headers.get("x-payment-response");
+                if (paymentResponse) {
+                  log(\`Payment Response Header: \${paymentResponse}\`);
+                }
+                
+                resultDiv.innerHTML = '✅ Test completed successfully!';
+              } else {
+                log("❌ FAILED - No weather report in response");
+                resultDiv.innerHTML = '❌ Test failed - No report in response';
+              }
+
+            } catch (error) {
+              log("❌ ERROR OCCURRED");
+              log(\`Error type: \${error.constructor.name}\`);
+              log(\`Error message: \${error.message}\`);
+              
+              if (error.response) {
+                try {
+                  log(\`Response status: \${error.response.status}\`);
+                  const errorBody = await error.response.text();
+                  log(\`Response body: \${errorBody}\`);
+                } catch (e) {
+                  log("Could not parse error response");
+                }
+              }
+              
+              if (error.cause) {
+                log(\`Error cause: \${JSON.stringify(error.cause)}\`);
+              }
+              
+              log(\`Stack trace: \${error.stack}\`);
+              resultDiv.innerHTML = \`❌ Test failed: \${error.message}\`;
+            }
+          }
+
+          // Run test when page loads
+          window.onload = runTest;
+        </script>
+        <style>
+          body { font-family: monospace; padding: 20px; }
+          #result { font-size: 18px; margin: 20px 0; padding: 10px; border-radius: 5px; }
+          #log { background: #f0f0f0; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+        </style>
+      </head>
+      <body>
+        <h1>Thirdweb X402 Browser Test</h1>
+        <div id="result">Test running...</div>
+        <div id="log"></div>
+      </body>
+      </html>
+    `;
+
+    // Navigate to the test page
+    await page.goto('http://localhost:8080/test.html');
+
+    // Wait for test completion (look for success or failure in result div)
+    await page.waitForFunction(
+      () => {
+        const result = document.getElementById('result').innerText;
+        return result.includes('✅') || result.includes('❌');
+      },
+      { timeout: 30000 }
+    );
+
+    // Get the final result
+    const result = await page.$eval('#result', el => el.innerText);
+    const logs = await page.$eval('#log', el => el.innerText);
+
+    console.log("\nTest Logs:");
+    console.log("=".repeat(80));
+    console.log(logs);
+    console.log("=".repeat(80));
+    console.log("\nFinal Result:", result);
+
+  } catch (error) {
+    console.error('Test runner error:', error);
+  } finally {
+    await browser.close();
+  }
+}
+
+// Run the test
+console.log("🚀 Starting browser-based Thirdweb X402 test...\n");
+runBrowserTest().catch(console.error);

@@ -1,0 +1,466 @@
+Starting multi-wallet concurrent transaction tests...
+
+=== Testing with 2 Wallets ===
+
+Running test with 2 wallets and 500ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:06 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:06 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+
+Results Summary:
+================
+Total time: 0.539 seconds
+Successful transactions: 0
+Failed transactions: 2
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+Running test with 2 wallets and 1000ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:11 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:12 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+
+Results Summary:
+================
+Total time: 1.008 seconds
+Successful transactions: 0
+Failed transactions: 2
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+Running test with 2 wallets and 2000ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:17 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:19 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+
+Results Summary:
+================
+Total time: 2.007 seconds
+Successful transactions: 0
+Failed transactions: 2
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+=== Testing with 3 Wallets ===
+
+Running test with 3 wallets and 500ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:29 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:30 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+[Wallet 3] Starting request from 0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3
+[Wallet 3] Making request to facilitator...
+[Wallet 3] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 3] Initial response status: 404
+[Wallet 3] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:30 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 3] ====== ERROR DETAILS ======
+[Wallet 3] Error type: SyntaxError
+[Wallet 3] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 3] Error location: at JSON.parse (<anonymous>)
+[Wallet 3] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 3] ========================
+
+Results Summary:
+================
+Total time: 1.016 seconds
+Successful transactions: 0
+Failed transactions: 3
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 3 (0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+Running test with 3 wallets and 1000ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:35 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:36 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+[Wallet 3] Starting request from 0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3
+[Wallet 3] Making request to facilitator...
+[Wallet 3] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 3] Initial response status: 404
+[Wallet 3] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:37 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 3] ====== ERROR DETAILS ======
+[Wallet 3] Error type: SyntaxError
+[Wallet 3] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 3] Error location: at JSON.parse (<anonymous>)
+[Wallet 3] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 3] ========================
+
+Results Summary:
+================
+Total time: 2.015 seconds
+Successful transactions: 0
+Failed transactions: 3
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 3 (0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+Running test with 3 wallets and 2000ms delay
+=====================================
+[Wallet 1] Starting request from 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[Wallet 1] Making request to facilitator...
+[Wallet 1] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 1] Initial response status: 404
+[Wallet 1] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:42 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 1] ====== ERROR DETAILS ======
+[Wallet 1] Error type: SyntaxError
+[Wallet 1] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 1] Error location: at JSON.parse (<anonymous>)
+[Wallet 1] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 1] ========================
+[Wallet 2] Starting request from 0x48c83C7DE03D2019C5465059d3b611F89A23cAe8
+[Wallet 2] Making request to facilitator...
+[Wallet 2] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 2] Initial response status: 404
+[Wallet 2] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:44 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 2] ====== ERROR DETAILS ======
+[Wallet 2] Error type: SyntaxError
+[Wallet 2] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 2] Error location: at JSON.parse (<anonymous>)
+[Wallet 2] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 2] ========================
+[Wallet 3] Starting request from 0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3
+[Wallet 3] Making request to facilitator...
+[Wallet 3] Sending payment request to http://127.0.0.1:4021/weather
+[Wallet 3] Initial response status: 404
+[Wallet 3] Initial headers: {
+  connection: 'keep-alive',
+  'content-length': '146',
+  'content-security-policy': "default-src 'none'",
+  'content-type': 'text/html; charset=utf-8',
+  date: 'Thu, 09 Oct 2025 12:37:46 GMT',
+  'keep-alive': 'timeout=5',
+  'x-content-type-options': 'nosniff',
+  'x-powered-by': 'Express'
+}
+
+[Wallet 3] ====== ERROR DETAILS ======
+[Wallet 3] Error type: SyntaxError
+[Wallet 3] Error message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[Wallet 3] Error location: at JSON.parse (<anonymous>)
+[Wallet 3] Stack trace: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at parseJSONFromBytes (node:internal/deps/undici/undici:6249:19)
+    at successSteps (node:internal/deps/undici/undici:6230:27)
+    at readAllBytes (node:internal/deps/undici/undici:5199:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Wallet 3] ========================
+
+Results Summary:
+================
+Total time: 4.015 seconds
+Successful transactions: 0
+Failed transactions: 3
+Wallet 1 (0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 2 (0x48c83C7DE03D2019C5465059d3b611F89A23cAe8): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Wallet 3 (0x744eC296Ba22E8296Ae5a83E0f3f0057f7E10Be3): Failed - Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+All tests completed!
