@@ -20,7 +20,7 @@ app.use(paymentMiddleware(
   {  // Route configurations for protected endpoints
     "GET /weather": {
       // USDC amount in dollars
-      price: "$0.001",
+      price: "$0.01",
       network: "polygon-amoy",
       // Optional: Add metadata for better discovery in x402 Bazaar
       config: {

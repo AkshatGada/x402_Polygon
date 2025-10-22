@@ -1,0 +1,21 @@
+# LangGraph Weather Agent with x402 Integration
+# Core dependencies
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-openai>=0.2.0
+
+# Async support
+asyncio-mqtt>=0.16.0
+
+# JSON handling
+pydantic>=2.0.0
+
+# Optional: For better error handling and logging
+structlog>=23.0.0
+rich>=13.0.0
+
+# Development dependencies (optional)
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
