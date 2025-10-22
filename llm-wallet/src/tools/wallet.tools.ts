@@ -7,6 +7,32 @@ const walletService = new WalletService();
 
 export const walletTools = [
   {
+    name: 'wallet_set_network',
+    description: 'Set the blockchain network (polygon or polygon-amoy)',
+    inputSchema: {
+      network: z.enum(['polygon', 'polygon-amoy']).describe('Network to use: polygon (mainnet) or polygon-amoy (testnet)')
+    },
+    async handler(args: { network: 'polygon' | 'polygon-amoy' }) {
+      const networkConfig = NETWORKS[args.network];
+      
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            success: true,
+            network: args.network,
+            chainId: networkConfig.chainId,
+            rpcUrl: networkConfig.rpcUrl,
+            usdcAddress: networkConfig.usdcAddress,
+            facilitatorUrl: networkConfig.facilitatorUrl,
+            message: `Network set to ${args.network}. Restart the MCP server to apply changes.`
+          }, null, 2)
+        }]
+      };
+    }
+  },
+
+  {
     name: 'wallet_create',
     description: 'Create a new Ethereum HD wallet with encrypted storage',
     inputSchema: {

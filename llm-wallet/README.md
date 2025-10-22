@@ -15,6 +15,13 @@ This server provides **18 MCP tools** that allow AI agents to:
 
 ## 🚀 Quick Start for Developers
 
+### Zero Configuration Setup
+The LLM Wallet MCP server now works out of the box with minimal configuration:
+- ✅ **Auto-generates encryption keys** (no manual setup required)
+- ✅ **Auto-detects network settings** (facilitator URLs, RPC endpoints)
+- ✅ **Only requires NETWORK environment variable** (polygon or polygon-amoy)
+- ✅ **Works with `npx llm-wallet-mcp`** (no local installation needed)
+
 ### Step 1: Add to Your MCP Configuration
 
 #### For Cursor (`~/.cursor/mcp.json`)
@@ -22,13 +29,10 @@ This server provides **18 MCP tools** that allow AI agents to:
 {
   "mcpServers": {
     "LLM Wallet": {
-      "command": "node",
-      "args": ["/path/to/llm-wallet/dist/index.js"],
+      "command": "npx",
+      "args": ["llm-wallet-mcp"],
       "env": {
-        "WALLET_ENCRYPTION_KEY": "your-32-char-encryption-key",
-        "NETWORK": "polygon-amoy",
-        "FACILITATOR_URL": "https://x402-amoy.polygon.technology",
-        "STORAGE_DIR": "/tmp/.llm-wallet"
+        "NETWORK": "polygon-amoy"
       }
     }
   }
@@ -40,10 +44,9 @@ This server provides **18 MCP tools** that allow AI agents to:
 {
   "mcpServers": {
     "LLM Wallet": {
-      "command": "node",
-      "args": ["/path/to/llm-wallet/dist/index.js"],
+      "command": "npx",
+      "args": ["llm-wallet-mcp"],
       "env": {
-        "WALLET_ENCRYPTION_KEY": "your-32-char-encryption-key",
         "NETWORK": "polygon-amoy"
       }
     }

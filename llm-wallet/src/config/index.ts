@@ -2,13 +2,13 @@ import { config as dotenvConfig } from 'dotenv';
 import { z } from 'zod';
 import { join } from 'path';
 import { homedir } from 'os';
+import { randomBytes } from 'crypto';
 
 dotenvConfig();
 
 const ConfigSchema = z.object({
-  WALLET_ENCRYPTION_KEY: z.string().min(32, 'Encryption key must be at least 32 characters'),
-  NETWORK: z.enum(['polygon', 'polygon-amoy']),
-  FACILITATOR_URL: z.string().url().default('https://x402-amoy.polygon.technology'),
+  WALLET_ENCRYPTION_KEY: z.string().min(32, 'Encryption key must be at least 32 characters').optional(),
+  NETWORK: z.enum(['polygon', 'polygon-amoy']).default('polygon-amoy'),
   RPC_URL: z.string().url().optional(),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   STORAGE_DIR: z.string().default(join(homedir(), '.llm-wallet')),
@@ -20,7 +20,23 @@ const ConfigSchema = z.object({
 
 export type Config = z.infer<typeof ConfigSchema>;
 
-export const config = ConfigSchema.parse(process.env);
+// Parse environment variables
+const rawConfig = ConfigSchema.parse(process.env);
+
+// Auto-generate encryption key if not provided
+const encryptionKey = rawConfig.WALLET_ENCRYPTION_KEY || randomBytes(32).toString('hex');
+
+// Get network configuration
+const network = rawConfig.NETWORK;
+const networkConfig = NETWORKS[network];
+
+// Create final config with auto-generated values
+export const config = {
+  ...rawConfig,
+  WALLET_ENCRYPTION_KEY: encryptionKey,
+  FACILITATOR_URL: networkConfig.facilitatorUrl,
+  RPC_URL: rawConfig.RPC_URL || networkConfig.rpcUrl,
+};
 
 export const NETWORKS = {
   'polygon-amoy': {
