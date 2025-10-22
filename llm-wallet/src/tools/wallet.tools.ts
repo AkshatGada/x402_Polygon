@@ -14,7 +14,7 @@ export const walletTools = [
     },
     async handler(args: { network: 'polygon' | 'polygon-amoy' }) {
       const networkConfig = NETWORKS[args.network];
-      
+
       return {
         content: [{
           type: 'text',

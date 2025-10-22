@@ -2,25 +2,17 @@
 
 Universal MCP (Model Context Protocol) server providing wallet capabilities and x402 micropayment functionality to any AI agent. This server enables AI agents to create wallets, manage spending limits, and automatically handle micropayments for paid APIs.
 
-## 🎯 What This MCP Server Does
+## What This MCP Server Does
 
 This server provides **18 MCP tools** that allow AI agents to:
-- 🔐 **Create and manage encrypted wallets** (HD wallets with private key encryption)
-- 💰 **Check balances** across multiple networks (Polygon, Base, Avalanche)
-- 💸 **Make automatic micropayments** to x402-protected APIs
-- 🛡️ **Enforce spending limits** (per-transaction and daily caps)
-- 📊 **Track payment history** and transaction logs
-- 🔌 **Register any paid API** as an MCP tool for easy reuse
-- 🌐 **Support multiple networks** (testnet and mainnet)
+- **Create and manage encrypted wallets** (HD wallets with private key encryption)
+- **Check balance** across networks (Polygon , Polygon Amoy)
+- **Make automatic micropayments** to x402-protected APIs
+- **Enforce spending limits** (per-transaction and daily caps)
+- **Track payment history** and transaction logs
+- **Register any paid API** as an MCP tool for easy reuse
+- **Support multiple networks** (testnet and mainnet)
 
-## 🚀 Quick Start for Developers
-
-### Zero Configuration Setup
-The LLM Wallet MCP server now works out of the box with minimal configuration:
-- ✅ **Auto-generates encryption keys** (no manual setup required)
-- ✅ **Auto-detects network settings** (facilitator URLs, RPC endpoints)
-- ✅ **Only requires NETWORK environment variable** (polygon or polygon-amoy)
-- ✅ **Works with `npx llm-wallet-mcp`** (no local installation needed)
 
 ### Step 1: Add to Your MCP Configuration
 
@@ -54,20 +46,15 @@ The LLM Wallet MCP server now works out of the box with minimal configuration:
 }
 ```
 
-### Step 2: Restart Your MCP Client
-- **Cursor**: Press `Cmd+Q` to quit completely, then reopen
-- **Claude Desktop**: Restart the application
-
-### Step 3: Verify Installation
+### Step 2: Verify Installation
 In your MCP client, you should now see **18 tools** available:
 - 4 wallet management tools
 - 2 spending limit tools  
 - 2 x402 buyer tools
 - 5 x402 seller tools
 - 4 dynamic API tools
-- 1 legacy tool
 
-## 🎯 Complete Buyer-Side Flow Example
+## Complete Buyer-Side Flow Example
 
 Here's a complete example of how to use the LLM Wallet MCP server from start to finish:
 
@@ -76,13 +63,13 @@ Here's a complete example of how to use the LLM Wallet MCP server from start to 
 **Option A: Create New Wallet**
 ```bash
 # In Cursor chat:
-@LLM Wallet create a new wallet with label "my-agent-wallet"
+create a new wallet with label "my-agent-wallet"
 ```
 
 **Option B: Import Existing Wallet**
 ```bash
 # In Cursor chat:
-@LLM Wallet import wallet with private key 0x1234... and label "my-wallet"
+import wallet with private key 0x1234... and label "my-wallet"
 ```
 
 **Expected Response:**
@@ -99,19 +86,7 @@ Here's a complete example of how to use the LLM Wallet MCP server from start to 
 
 ```bash
 # In Cursor chat:
-@LLM Wallet check the balance for my-agent-wallet
-```
-
-**Expected Response:**
-```json
-{
-  "address": "0x742d35Cc6635C0532925a3b8D2A0a7e3E4b1b4e4",
-  "balances": {
-    "usdc": "100.50",
-    "native": "2.5"
-  },
-  "network": "polygon-amoy"
-}
+check the balance for my-agent-wallet
 ```
 
 ### Step 3: Set Spending Limits (Optional but Recommended)
@@ -137,7 +112,7 @@ Here's a complete example of how to use the LLM Wallet MCP server from start to 
 
 ```bash
 # In Cursor chat:
-@LLM Wallet register the weather API at http://localhost:4021/weather as a paid MCP tool called "weather_api"
+Register the weather API at http://localhost:4021/weather as a paid MCP tool called "weather_api"
 ```
 
 **Expected Response:**
@@ -155,7 +130,7 @@ Here's a complete example of how to use the LLM Wallet MCP server from start to 
 
 ```bash
 # In Cursor chat:
-@LLM Wallet call the weather_api tool with location "London"
+Call the weather_api tool with location "London"
 ```
 
 **What Happens Behind the Scenes:**
@@ -260,61 +235,14 @@ Here's a complete example of how to use the LLM Wallet MCP server from start to 
 - **`api_call`** - Execute a registered API tool with parameters
 - **`api_unregister`** - Remove a registered API tool
 
-### Legacy Tools (1 tool)
-- **`x402_verify`** - Direct facilitator verification (use seller_verify_payment instead)
-- **`x402_settle`** - Direct facilitator settlement (use seller_settle_payment instead)
-
-## 🔧 Environment Configuration
-
-### Required Environment Variables
-
-```bash
-# Generate with: openssl rand -hex 32
-WALLET_ENCRYPTION_KEY=your-32-character-hex-encryption-key
-
-# Network to use (testnet recommended for development)
-NETWORK=polygon-amoy
-
-# Facilitator URL for the network
-FACILITATOR_URL=https://x402-amoy.polygon.technology
-
-# Storage directory for wallet data
-STORAGE_DIR=/tmp/.llm-wallet
-```
-
-### Optional Environment Variables
-
-```bash
-# Logging level (error, warn, info, debug)
-LOG_LEVEL=info
-
-# Port for health checks (optional)
-PORT=3000
-
-# Rate limiting (requests per minute)
-RATE_LIMIT_PER_MINUTE=100
-
-# CORS origins (comma-separated)
-CORS_ORIGINS=*
-```
 
 ## 🌐 Supported Networks
 
 ### Testnets (Recommended for Development)
 - **Polygon Amoy** - Chain ID: 80002
-- **Base Sepolia** - Chain ID: 84532  
-- **Avalanche Fuji** - Chain ID: 43113
 
 ### Mainnets (Production Use)
 - **Polygon** - Chain ID: 137
-- **Base** - Chain ID: 8453
-- **Avalanche** - Chain ID: 43114
-
-### Network Configuration
-Each network uses its respective facilitator:
-- **Polygon Amoy**: `https://x402-amoy.polygon.technology`
-- **Base Sepolia**: `https://x402-sepolia.base.org`
-- **Avalanche Fuji**: `https://x402-fuji.avalanche.network`
 
 ## 🎯 Use Cases & Examples
 

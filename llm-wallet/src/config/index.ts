@@ -20,6 +20,21 @@ const ConfigSchema = z.object({
 
 export type Config = z.infer<typeof ConfigSchema>;
 
+export const NETWORKS = {
+  'polygon-amoy': {
+    chainId: 80002,
+    rpcUrl: 'https://rpc-amoy.polygon.technology',
+    usdcAddress: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
+    facilitatorUrl: 'https://x402-amoy.polygon.technology',
+  },
+  'polygon': {
+    chainId: 137,
+    rpcUrl: 'https://polygon-rpc.com',
+    usdcAddress: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+    facilitatorUrl: 'https://x402.org/facilitator',
+  },
+} as const;
+
 // Parse environment variables
 const rawConfig = ConfigSchema.parse(process.env);
 
@@ -37,21 +52,6 @@ export const config = {
   FACILITATOR_URL: networkConfig.facilitatorUrl,
   RPC_URL: rawConfig.RPC_URL || networkConfig.rpcUrl,
 };
-
-export const NETWORKS = {
-  'polygon-amoy': {
-    chainId: 80002,
-    rpcUrl: 'https://rpc-amoy.polygon.technology',
-    usdcAddress: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
-    facilitatorUrl: 'https://x402-amoy.polygon.technology',
-  },
-  'polygon': {
-    chainId: 137,
-    rpcUrl: 'https://polygon-rpc.com',
-    usdcAddress: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
-    facilitatorUrl: 'https://x402.org/facilitator',
-  },
-} as const;
 
 export type Network = keyof typeof NETWORKS;
 
