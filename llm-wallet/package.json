@@ -1,6 +1,6 @@
 {
   "name": "llm-wallet-mcp",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Universal MCP server for x402 wallet and payment capabilities",
   "main": "dist/index.js",
   "type": "module",
@@ -55,6 +55,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "overrides": {
+    "@walletconnect/sign-client": "^2.22.0",
+    "@walletconnect/universal-provider": "^2.22.0",
+    "@walletconnect/ethereum-provider": "^2.22.0",
+    "@paulmillr/qr": "^0.3.0"
   },
   "files": [
     "dist",

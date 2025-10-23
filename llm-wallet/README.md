@@ -54,6 +54,8 @@ In your MCP client, you should now see **18 tools** available:
 - 5 x402 seller tools
 - 4 dynamic API tools
 
+> **⚠️ Development Notice**: This package is still in development. Please prefer to use on testnet (polygon-amoy) or if using on mainnet, use only small amounts. Do not use in production environments.
+
 ## Complete Buyer-Side Flow Example
 
 Here's a complete example of how to use the LLM Wallet MCP server from start to finish:
@@ -206,7 +208,7 @@ Call the weather_api tool with location "London"
 }
 ```
 
-## 🛠️ Complete Tool Reference
+## Complete Tool Reference
 
 ### Wallet Management (4 tools)
 - **`wallet_create`** - Create new HD wallet with encrypted storage
@@ -236,7 +238,7 @@ Call the weather_api tool with location "London"
 - **`api_unregister`** - Remove a registered API tool
 
 
-## 🌐 Supported Networks
+## Supported Networks
 
 ### Testnets (Recommended for Development)
 - **Polygon Amoy** - Chain ID: 80002
@@ -244,7 +246,7 @@ Call the weather_api tool with location "London"
 ### Mainnets (Production Use)
 - **Polygon** - Chain ID: 137
 
-## 🎯 Use Cases & Examples
+## Use Cases & Examples
 
 ### 1. AI Agent with Budget Control
 ```bash
@@ -289,14 +291,14 @@ NETWORK=polygon-amoy @LLM Wallet create wallet with label "test-wallet"
 NETWORK=polygon @LLM Wallet create wallet with label "prod-wallet"
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
 **"No tools available" in MCP client**
-- ✅ Restart your MCP client completely (Cursor: Cmd+Q, then reopen)
-- ✅ Verify `~/.cursor/mcp.json` is valid JSON
-- ✅ Check the path to `dist/index.js` is correct and absolute
+- Restart your MCP client completely (Cursor: Cmd+Q, then reopen)
+- Verify `~/.cursor/mcp.json` is valid JSON
+- Check the path to `dist/index.js` is correct and absolute
 - ✅ Ensure the MCP server builds successfully: `npm run build`
 
 **"Wallet not found" error**
@@ -357,25 +359,6 @@ export WALLET_ENCRYPTION_KEY="your-secure-key"
 export NETWORK="polygon-amoy"  # Use testnet for development
 ```
 
-## 🏗️ Architecture
-
-```
-src/
-├── config/         # Environment and network configuration
-├── services/       # Core business logic
-│   ├── wallet.service.ts     # HD wallet creation and encryption
-│   ├── storage.service.ts    # Encrypted file-based storage
-│   └── x402.service.ts       # x402 payment protocol client
-├── tools/          # MCP tool implementations
-│   ├── wallet.tools.ts       # Wallet management tools
-│   ├── x402.tools.ts         # x402 payment tools
-│   ├── api.tools.ts          # Dynamic API registration tools
-│   ├── seller.tools.ts       # Seller-side tools
-│   └── index.ts              # Tool aggregation
-├── types/          # TypeScript type definitions
-└── index.ts        # MCP server entry point
-```
-
 ### Key Components
 
 **Wallet Service**: Creates and manages HD wallets with AES-256-GCM encryption
@@ -391,14 +374,10 @@ src/
 - **Viem**: [Ethereum TypeScript Library](https://viem.sh/)
 
 ### Related Projects
-- **x402 SDK**: TypeScript/JavaScript SDK for x402 protocol
+- **x402**: TypeScript/JavaScript SDK for x402 protocol
 - **x402-fetch**: Automatic 402 response handling
 - **x402-express**: Express.js middleware for x402
 
-### Community
-- **Discord**: Join the x402 community for support
-- **GitHub Issues**: Report bugs and feature requests
-- **Discussions**: Share use cases and best practices
 
 ## 📄 License
 
@@ -406,5 +385,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Ready to get started?** Follow the [Complete Buyer-Side Flow Example](#-complete-buyer-side-flow-example) above! 🚀
+
 
