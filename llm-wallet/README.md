@@ -4,14 +4,23 @@ Universal MCP (Model Context Protocol) server providing wallet capabilities and 
 
 ## What This MCP Server Does
 
-This server provides **18 MCP tools** that allow AI agents to:
+This server provides **22 MCP tools** that allow AI agents to:
 - **Create and manage encrypted wallets** (HD wallets with private key encryption)
-- **Check balance** across networks (Polygon , Polygon Amoy)
+- **Check balance** across networks (Polygon, Polygon Amoy)
 - **Make automatic micropayments** to x402-protected APIs
 - **Enforce spending limits** (per-transaction and daily caps)
 - **Track payment history** and transaction logs
 - **Register any paid API** as an MCP tool for easy reuse
+- **Discover public x402 APIs** via searchable registry
 - **Support multiple networks** (testnet and mainnet)
+
+## ✨ New in v2.0.0
+
+- **SQLite Database**: Persistent storage instead of JSON files
+- **Public API Registry**: Discover and search x402-protected APIs
+- **Cloud Hosting Ready**: Deploy to Railway, Render, or Fly.io
+- **Better Performance**: Faster queries and concurrent access
+- **API Discovery Tools**: 4 new tools for finding and exploring APIs
 
 
 ### Step 1: Add to Your MCP Configuration
@@ -47,12 +56,13 @@ This server provides **18 MCP tools** that allow AI agents to:
 ```
 
 ### Step 2: Verify Installation
-In your MCP client, you should now see **18 tools** available:
+In your MCP client, you should now see **22 tools** available:
 - 4 wallet management tools
 - 2 spending limit tools  
 - 2 x402 buyer tools
 - 5 x402 seller tools
 - 4 dynamic API tools
+- 4 API registry/discovery tools (NEW!)
 
 > **⚠️ Development Notice**: This package is still in development. Please prefer to use on testnet (polygon-amoy) or if using on mainnet, use only small amounts. Do not use in production environments.
 
@@ -366,7 +376,106 @@ export NETWORK="polygon-amoy"  # Use testnet for development
 **X402 Service**: Handles x402 protocol interactions (buyer-side only)
 **Tool Handlers**: MCP tool implementations with input validation
 
-## 📚 Additional Resources
+## 🚀 Cloud Deployment (New!)
+
+The MCP server can now be hosted 24/7 on cloud platforms with persistent SQLite storage.
+
+### Option 1: Railway (Recommended)
+
+1. **Install Railway CLI**:
+   ```bash
+   npm install -g @railway/cli
+   ```
+
+2. **Login and deploy**:
+   ```bash
+   cd llm-wallet
+   railway login
+   railway init
+   railway up
+   ```
+
+3. **Set environment variables** in Railway dashboard:
+   - `WALLET_ENCRYPTION_KEY`: Generate with `openssl rand -hex 32`
+   - `NETWORK`: `polygon-amoy` or `polygon`
+   - `STORAGE_DIR`: `/data` (already set in Dockerfile)
+
+4. **Add persistent volume**: In Railway dashboard, add a volume mounted at `/data`
+
+**Cost**: ~$5-10/month
+
+### Option 2: Render
+
+1. Create `render.yaml` in your repository (already included)
+2. Connect your GitHub repo to Render
+3. Set environment variables in Render dashboard
+4. Add persistent disk at `/data`
+
+**Cost**: Free tier available (with sleep after inactivity)
+
+### Option 3: Fly.io
+
+1. **Install flyctl**:
+   ```bash
+   curl -L https://fly.io/install.sh | sh
+   ```
+
+2. **Deploy**:
+   ```bash
+   cd llm-wallet
+   fly launch
+   fly volumes create llm_wallet_data --size 1
+   fly deploy
+   ```
+
+**Cost**: ~$5-15/month
+
+### Migration from Local Files
+
+If you have existing data in JSON files, migrate to SQLite:
+
+```bash
+npx tsx scripts/migrate-to-sqlite.ts
+```
+
+This will convert your local JSON files to the new SQLite database format.
+
+## 🔍 API Discovery Tools (New!)
+
+Discover and search publicly registered x402 APIs:
+
+### `registry_list`
+List all registered APIs:
+```
+User: "Show me all x402 APIs"
+→ Returns list of all registered APIs with prices
+```
+
+### `registry_search`
+Search for APIs by keyword:
+```
+User: "Find weather APIs"
+→ Returns APIs matching "weather" in name or description
+```
+
+### `registry_get`
+Get detailed info about a specific API:
+```
+User: "Tell me about the OpenWeather API"
+→ Returns full details including endpoint, price, schema
+```
+
+### `registry_stats`
+Get registry statistics:
+```
+User: "How many x402 APIs are registered?"
+→ Returns total count, breakdown by network, top APIs
+```
+
+### Example Usage
+
+```
+User: "Find all weather APIs and call the cheapest one for London"
 
 ### Documentation
 - **x402 Protocol**: [GitHub Repository](https://github.com/coinbase/x402)

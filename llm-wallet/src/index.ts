@@ -5,24 +5,15 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { StorageService } from './services/index.js';
 import { allTools } from './tools/index.js';
 import { loadApiConfigs } from './tools/api.tools.js';
-import pino from 'pino';
 import { config } from './config/index.js';
-
-const logger = pino({
-  level: config.LOG_LEVEL,
-  transport: {
-    target: 'pino-pretty',
-    options: { colorize: true }
-  }
-});
 
 // Initialize storage
 await StorageService.init();
-logger.info('Storage initialized');
+console.error('Storage initialized');
 
 // Load saved API configurations
 await loadApiConfigs();
-logger.info('API configurations loaded');
+console.error('API configurations loaded');
 
 // Create MCP server
 const server = new McpServer({
@@ -39,11 +30,11 @@ for (const tool of allTools as any[]) {
       inputSchema: tool.inputSchema,
     },
     async (args: any) => {
-      logger.info({ tool: tool.name, args }, 'Tool called');
+      console.error(`Tool called: ${tool.name}`, args);
 
       try {
         const result = await tool.handler(args);
-        logger.info({ tool: tool.name }, 'Tool executed successfully');
+        console.error(`Tool executed successfully: ${tool.name}`);
 
         // MCP expects a response with content array
         return {
@@ -55,7 +46,7 @@ for (const tool of allTools as any[]) {
           ]
         };
       } catch (error) {
-        logger.error({ tool: tool.name, error }, 'Tool execution failed');
+        console.error(`Tool execution failed: ${tool.name}`, error);
         throw error;
       }
     }
@@ -67,15 +58,15 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  logger.info({
+  console.error('LLM Wallet MCP Server running on stdio', {
     network: config.NETWORK,
     facilitator: config.FACILITATOR_URL,
     storageDir: config.STORAGE_DIR,
-  }, 'LLM Wallet MCP Server running on stdio');
+  });
 }
 
 main().catch((error) => {
-  logger.error({ error }, 'Fatal error');
+  console.error('Fatal error:', error);
   process.exit(1);
 });
 
