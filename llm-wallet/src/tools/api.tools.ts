@@ -268,7 +268,7 @@ export async function loadApiConfigs() {
     for (const [name, config] of Object.entries(configs)) {
       registeredApis.set(name, config as ApiEndpointConfig);
     }
-    console.log(`Loaded ${registeredApis.size} API tool configurations`);
+    console.error(`Loaded ${registeredApis.size} API tool configurations`);
   } catch (error) {
     console.error('Failed to load API configs:', error);
   }
