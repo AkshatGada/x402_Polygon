@@ -57,11 +57,22 @@ export function wrapFetchWithPayment(
     const parsedPaymentRequirements = accepts.map(x => PaymentRequirementsSchema.parse(x));
 
     const chainId = evm.isSignerWallet(walletClient) ? walletClient.chain?.id : undefined;
-    const selectedPaymentRequirements = paymentRequirementsSelector(
+
+    // Try to find exact-scaled scheme first, fall back to exact
+    let selectedPaymentRequirements = paymentRequirementsSelector(
       parsedPaymentRequirements,
       chainId ? ChainIdToNetwork[chainId] : undefined,
-      "exact",
+      "exact-scaled",
     );
+
+    // If no exact-scaled found, try exact
+    if (!selectedPaymentRequirements || selectedPaymentRequirements.scheme !== "exact-scaled") {
+      selectedPaymentRequirements = paymentRequirementsSelector(
+        parsedPaymentRequirements,
+        chainId ? ChainIdToNetwork[chainId] : undefined,
+        "exact",
+      );
+    }
 
     if (BigInt(selectedPaymentRequirements.maxAmountRequired) > maxValue) {
       throw new Error("Payment amount exceeds maximum allowed");

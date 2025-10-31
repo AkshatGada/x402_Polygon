@@ -168,8 +168,9 @@ describe("paymentMiddleware()", () => {
     mockSettle = vi.fn();
 
     vi.mocked(useFacilitator).mockReturnValue({
-      verify: mockVerify,
-      settle: mockSettle,
+      verify: mockVerify as any,
+      settle: mockSettle as any,
+      list: vi.fn().mockResolvedValue([]),
     });
 
     // Setup paywall HTML mock

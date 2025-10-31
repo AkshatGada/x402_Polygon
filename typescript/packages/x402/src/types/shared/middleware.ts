@@ -27,6 +27,10 @@ export type PaymentMiddlewareConfig = {
   discoverable?: boolean;
   customPaywallHtml?: string;
   resource?: Resource;
+  // Scaled payment configuration
+  paymentContract?: string; // Payment contract address for exact-scaled scheme
+  scheme?: "exact" | "exact-scaled"; // Payment scheme to use (defaults to "exact")
+  maxAmountLockRequired?: string; // Recommended deposit amount for exact-scaled
   errorMessages?: {
     paymentRequired?: string;
     invalidPayment?: string;

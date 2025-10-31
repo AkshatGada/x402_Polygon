@@ -19,11 +19,16 @@ export async function signPaymentHeader(
 ): Promise<string> {
   if (
     paymentRequirements.scheme === "exact" &&
-    SupportedEVMNetworks.includes(paymentRequirements.network)
+    SupportedEVMNetworks.includes(paymentRequirements.network) &&
+    unsignedPaymentHeader.scheme === "exact"
   ) {
-    const signedPaymentHeader = await signPaymentHeaderExactEVM(client, paymentRequirements, unsignedPaymentHeader);
+    const signedPaymentHeader = await signPaymentHeaderExactEVM(
+      client,
+      paymentRequirements as PaymentRequirements & { scheme: "exact" },
+      unsignedPaymentHeader as UnsignedPaymentPayload & { scheme: "exact" }
+    );
     return encodePayment(signedPaymentHeader);
   }
 
-  throw new Error("Unsupported scheme");
+  throw new Error(`Unsupported scheme: ${paymentRequirements.scheme}`);
 }

@@ -12,7 +12,7 @@ import { getNetworkId } from "../shared/network";
  * @param scheme - The scheme to check against. If not provided, the scheme will not be checked.
  * @returns The payment requirement that is the most appropriate for the user.
  */
-export function selectPaymentRequirements(paymentRequirements: PaymentRequirements[], network?: Network, scheme?: "exact"): PaymentRequirements {
+export function selectPaymentRequirements(paymentRequirements: PaymentRequirements[], network?: Network, scheme?: "exact" | "exact-scaled"): PaymentRequirements {
   // Sort `base` payment requirements to the front of the list. This is to ensure that base is preferred if available.
   paymentRequirements.sort((a, b) => {
     if (a.network === "base" && b.network !== "base") {
@@ -62,4 +62,4 @@ export function selectPaymentRequirements(paymentRequirements: PaymentRequiremen
  * @param scheme - The scheme to check against. If not provided, the scheme will not be checked.
  * @returns The payment requirement that is the most appropriate for the user.
  */
-export type PaymentRequirementsSelector = (paymentRequirements: PaymentRequirements[], network?: Network, scheme?: "exact") => PaymentRequirements;
+export type PaymentRequirementsSelector = (paymentRequirements: PaymentRequirements[], network?: Network, scheme?: "exact" | "exact-scaled") => PaymentRequirements;

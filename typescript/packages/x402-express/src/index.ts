@@ -20,6 +20,7 @@ import {
   settleResponseHeader,
 } from "x402/types";
 import { useFacilitator } from "x402/verify";
+import { signatureStorage } from "x402/facilitator";
 
 /**
  * Creates a payment middleware factory for Express
@@ -101,6 +102,9 @@ export function paymentMiddleware(
       customPaywallHtml,
       resource,
       discoverable,
+      paymentContract,
+      scheme = "exact",
+      maxAmountLockRequired,
     } = config;
 
     const atomicAmountForAsset = processPriceToAtomicAmount(price, network);
@@ -112,9 +116,41 @@ export function paymentMiddleware(
     const resourceUrl: Resource =
       resource || (`${req.protocol}://${req.headers.host}${req.path}` as Resource);
 
+    // Determine scheme: use exact-scaled if paymentContract is provided, otherwise use configured scheme
+    const useScaledScheme = scheme === "exact-scaled" || (scheme === "exact" && paymentContract);
+    const finalScheme = useScaledScheme ? "exact-scaled" : "exact";
+
+    // For exact-scaled, get deposit status info
+    let depositInfo: {
+      isLocked?: boolean;
+      amountLocked?: string;
+      amountUsed?: string;
+      lockupExpiry?: string;
+      lastTotalValue?: string;
+    } = {};
+
+    if (useScaledScheme && paymentContract) {
+      // Try to get deposit status if payment header exists (for returning deposit info)
+      if (req.header("X-PAYMENT")) {
+        try {
+          const payment = req.header("X-PAYMENT")!;
+          const decoded = exact.evm.decodePayment(payment);
+          if (decoded.scheme === "exact-scaled") {
+            const lastTotalValue = signatureStorage.getLastTotalValue(
+              decoded.payload.authorization.from as Address,
+              getAddress(payTo)
+            );
+            depositInfo.lastTotalValue = lastTotalValue.toString();
+          }
+        } catch {
+          // Ignore errors when decoding payment
+        }
+      }
+    }
+
     const paymentRequirements: PaymentRequirements[] = [
       {
-        scheme: "exact",
+        scheme: finalScheme,
         network,
         maxAmountRequired,
         resource: resourceUrl,
@@ -134,6 +170,14 @@ export function paymentMiddleware(
           output: outputSchema,
         },
         extra: asset.eip712,
+        // Scaled-specific fields
+        ...(useScaledScheme && paymentContract ? {
+          paymentContract,
+          isLocked: depositInfo.isLocked,
+          amountLocked: depositInfo.amountLocked,
+          maxAmountLockRequired: maxAmountLockRequired,
+          lockupExpiry: depositInfo.lockupExpiry,
+        } : {}),
       },
     ];
 
@@ -183,6 +227,7 @@ export function paymentMiddleware(
 
     let decodedPayment: PaymentPayload;
     try {
+      // Try to decode - exact.evm.decodePayment handles both schemes via discriminated union
       decodedPayment = exact.evm.decodePayment(payment);
       decodedPayment.x402Version = x402Version;
     } catch (error) {

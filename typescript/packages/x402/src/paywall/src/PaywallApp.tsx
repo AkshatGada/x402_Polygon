@@ -148,10 +148,16 @@ export function PaywallApp() {
 
       setStatus("Creating payment signature...");
       const validPaymentRequirements = ensureValidAmount(paymentRequirements);
+
+      // Only support exact scheme in paywall for now
+      if (validPaymentRequirements.scheme !== "exact") {
+        throw new Error("Paywall currently only supports exact scheme");
+      }
+
       const initialPayment = await exact.evm.createPayment(
         walletClient,
         1,
-        validPaymentRequirements,
+        validPaymentRequirements as typeof validPaymentRequirements & { scheme: "exact" },
       );
 
       const paymentHeader: string = exact.evm.encodePayment(initialPayment);
@@ -174,7 +180,7 @@ export function PaywallApp() {
           const retryPayment = await exact.evm.createPayment(
             walletClient,
             errorData.x402Version,
-            validPaymentRequirements,
+            validPaymentRequirements as typeof validPaymentRequirements & { scheme: "exact" },
           );
 
           retryPayment.x402Version = errorData.x402Version;

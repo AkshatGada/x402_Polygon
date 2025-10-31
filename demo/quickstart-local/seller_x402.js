@@ -4,7 +4,7 @@ import { paymentMiddleware } from "x402-express";
 
 const app = express();
 
-const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://facilitator.payai.network";
+const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://x402-amoy.polygon.technology";
 
 console.log("=".repeat(80));
 console.log("🚀 X402 Seller Server Configuration");
@@ -50,7 +50,7 @@ app.use(paymentMiddleware(
 app.get("/weather", (req, res) => {
   res.send({
     report: {
-      weather: "sunny",
+      weather: "sun",
       temperature: 70,
     },
   });

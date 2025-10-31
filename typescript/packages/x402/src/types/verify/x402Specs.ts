@@ -7,7 +7,7 @@ const MixedAddressRegex = /^0x[a-fA-F0-9]{40}|[A-Za-z0-9][A-Za-z0-9-]{0,34}[A-Za
 const HexEncoded64ByteRegex = /^0x[0-9a-fA-F]{64}$/;
 const EvmSignatureRegex = /^0x[0-9a-fA-F]+$/; // Flexible hex signature validation
 // Enums
-export const schemes = ["exact"] as const;
+export const schemes = ["exact", "exact-scaled"] as const;
 export const x402Versions = [1] as const;
 export const ErrorReasons = [
   "insufficient_funds",
@@ -27,6 +27,11 @@ export const ErrorReasons = [
   "invalid_transaction_state",
   "unexpected_verify_error",
   "unexpected_settle_error",
+  // Scaled-specific errors
+  "no_deposit",
+  "deposit_expired",
+  "totalValue_not_incremental",
+  "insufficient_deposit",
 ] as const;
 
 // Refiners
@@ -46,6 +51,12 @@ export const PaymentRequirementsSchema = z.object({
   maxTimeoutSeconds: z.number().int(),
   asset: z.string().regex(MixedAddressRegex),
   extra: z.record(z.any()).optional(),
+  // Scaled-specific fields (optional, only present for exact-scaled scheme)
+  isLocked: z.boolean().optional(),
+  amountLocked: z.string().refine(isInteger).optional(),
+  maxAmountLockRequired: z.string().refine(isInteger).optional(),
+  lockupExpiry: z.string().refine(isInteger).optional(),
+  paymentContract: z.string().regex(EvmAddressRegex).optional(),
 });
 export type PaymentRequirements = z.infer<typeof PaymentRequirementsSchema>;
 
@@ -66,16 +77,40 @@ export const ExactEvmPayloadSchema = z.object({
 });
 export type ExactEvmPayload = z.infer<typeof ExactEvmPayloadSchema>;
 
-// x402PaymentPayload
-export const PaymentPayloadSchema = z.object({
-  x402Version: z.number().refine(val => x402Versions.includes(val as 1)),
-  scheme: z.enum(schemes),
-  network: NetworkSchema,
-  payload: ExactEvmPayloadSchema,
+// x402Scaled: Cumulative Authorization (no nonce/validAfter/validBefore)
+export const CumulativeAuthorizationSchema = z.object({
+  from: z.string().regex(EvmAddressRegex),
+  to: z.string().regex(EvmAddressRegex),
+  totalValue: z.string().refine(isInteger).refine(hasMaxLength(EvmMaxAtomicUnits)),
 });
+export type CumulativeAuthorization = z.infer<typeof CumulativeAuthorizationSchema>;
+
+export const ScaledEvmPayloadSchema = z.object({
+  signature: z.string().regex(EvmSignatureRegex),
+  authorization: CumulativeAuthorizationSchema,
+});
+export type ScaledEvmPayload = z.infer<typeof ScaledEvmPayloadSchema>;
+
+// x402PaymentPayload (supports both exact and exact-scaled)
+export const PaymentPayloadSchema = z.discriminatedUnion("scheme", [
+  z.object({
+    x402Version: z.number().refine(val => x402Versions.includes(val as 1)),
+    scheme: z.literal("exact"),
+    network: NetworkSchema,
+    payload: ExactEvmPayloadSchema,
+  }),
+  z.object({
+    x402Version: z.number().refine(val => x402Versions.includes(val as 1)),
+    scheme: z.literal("exact-scaled"),
+    network: NetworkSchema,
+    payload: ScaledEvmPayloadSchema,
+  }),
+]);
 export type PaymentPayload = z.infer<typeof PaymentPayloadSchema>;
 export type UnsignedPaymentPayload = Omit<PaymentPayload, "payload"> & {
-  payload: Omit<ExactEvmPayload, "signature"> & { signature: undefined };
+  payload: PaymentPayload["scheme"] extends "exact"
+  ? Omit<ExactEvmPayload, "signature"> & { signature: undefined }
+  : Omit<ScaledEvmPayload, "signature"> & { signature: undefined };
 };
 
 // x402 Resource Server Response

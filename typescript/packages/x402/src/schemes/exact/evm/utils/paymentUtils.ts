@@ -25,6 +25,7 @@ export function encodePayment(payment: PaymentPayload): string {
 
 /**
  * Decodes a base64 encoded payment string back into a PaymentPayload object
+ * Supports both exact and exact-scaled schemes
  *
  * @param payment - The base64 encoded payment string to decode
  * @returns The decoded and validated PaymentPayload object
@@ -33,15 +34,24 @@ export function decodePayment(payment: string): PaymentPayload {
   const decoded = safeBase64Decode(payment);
   const parsed = JSON.parse(decoded);
 
+  // Handle both exact and exact-scaled schemes
   const obj = {
     ...parsed,
     payload: {
       signature: parsed.payload.signature,
       authorization: {
         ...parsed.payload.authorization,
-        value: parsed.payload.authorization.value,
-        validAfter: parsed.payload.authorization.validAfter,
-        validBefore: parsed.payload.authorization.validBefore,
+        // For exact scheme
+        ...(parsed.payload.authorization.value !== undefined ? {
+          value: parsed.payload.authorization.value,
+          validAfter: parsed.payload.authorization.validAfter,
+          validBefore: parsed.payload.authorization.validBefore,
+          nonce: parsed.payload.authorization.nonce,
+        } : {}),
+        // For exact-scaled scheme
+        ...(parsed.payload.authorization.totalValue !== undefined ? {
+          totalValue: parsed.payload.authorization.totalValue,
+        } : {}),
       },
     },
   };

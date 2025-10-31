@@ -199,17 +199,36 @@ export async function settle<transport extends Transport, chain extends Chain>(
   // Returns the original signature (no-op) if the signature is not a 6492 signature
   const { signature } = parseErc6492Signature(paymentPayload.payload.signature as Hex);
 
+  // Type narrowing: ensure this is exact scheme payload
+  if (paymentPayload.scheme !== "exact") {
+    throw new Error("settleExact only supports exact scheme");
+  }
+
+  // Type narrowing: ensure authorization has exact structure
+  if (!("value" in paymentPayload.payload.authorization)) {
+    throw new Error("Invalid authorization structure for exact scheme");
+  }
+
+  const exactAuth = paymentPayload.payload.authorization as {
+    from: string;
+    to: string;
+    value: string;
+    validAfter: string;
+    validBefore: string;
+    nonce: string;
+  };
+
   const tx = await wallet.writeContract({
     address: paymentRequirements.asset as Address,
     abi,
     functionName: "transferWithAuthorization" as const,
     args: [
-      paymentPayload.payload.authorization.from as Address,
-      paymentPayload.payload.authorization.to as Address,
-      BigInt(paymentPayload.payload.authorization.value),
-      BigInt(paymentPayload.payload.authorization.validAfter),
-      BigInt(paymentPayload.payload.authorization.validBefore),
-      paymentPayload.payload.authorization.nonce as Hex,
+      exactAuth.from as Address,
+      exactAuth.to as Address,
+      BigInt(exactAuth.value),
+      BigInt(exactAuth.validAfter),
+      BigInt(exactAuth.validBefore),
+      exactAuth.nonce as Hex,
       signature,
     ],
     chain: wallet.chain as Chain,

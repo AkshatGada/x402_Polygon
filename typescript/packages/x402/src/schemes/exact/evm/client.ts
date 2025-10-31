@@ -16,7 +16,11 @@ export function preparePaymentHeader(
   from: Address,
   x402Version: number,
   paymentRequirements: PaymentRequirements,
-): UnsignedPaymentPayload {
+): UnsignedPaymentPayload & { scheme: "exact" } {
+  if (paymentRequirements.scheme !== "exact") {
+    throw new Error("preparePaymentHeader only supports exact scheme");
+  }
+
   const nonce = createNonce();
 
   const validAfter = BigInt(
@@ -28,7 +32,7 @@ export function preparePaymentHeader(
 
   return {
     x402Version,
-    scheme: paymentRequirements.scheme,
+    scheme: "exact" as const,
     network: paymentRequirements.network,
     payload: {
       signature: undefined,
@@ -39,9 +43,9 @@ export function preparePaymentHeader(
         validAfter: validAfter.toString(),
         validBefore: validBefore.toString(),
         nonce,
-      },
+      } as any, // Type assertion needed due to discriminated union complexity
     },
-  };
+  } as UnsignedPaymentPayload & { scheme: "exact" };
 }
 
 /**
@@ -55,21 +59,34 @@ export function preparePaymentHeader(
 export async function signPaymentHeader<transport extends Transport, chain extends Chain>(
   client: SignerWallet<chain, transport> | LocalAccount,
   paymentRequirements: PaymentRequirements,
-  unsignedPaymentHeader: UnsignedPaymentPayload,
-): Promise<PaymentPayload> {
+  unsignedPaymentHeader: UnsignedPaymentPayload & { scheme: "exact" },
+): Promise<PaymentPayload & { scheme: "exact" }> {
+  if (unsignedPaymentHeader.scheme !== "exact") {
+    throw new Error("signPaymentHeader only supports exact scheme");
+  }
+
+  // Type narrowing: ensure payload has exact authorization structure
+  if (!("value" in unsignedPaymentHeader.payload.authorization)) {
+    throw new Error("Invalid authorization structure for exact scheme");
+  }
+
   const { signature } = await signAuthorization(
     client,
-    unsignedPaymentHeader.payload.authorization,
+    unsignedPaymentHeader.payload.authorization as any,
     paymentRequirements,
   );
 
-  return {
-    ...unsignedPaymentHeader,
+  // Type-safe construction of exact payment payload
+  const result: PaymentPayload & { scheme: "exact" } = {
+    x402Version: unsignedPaymentHeader.x402Version,
+    scheme: "exact" as const,
+    network: unsignedPaymentHeader.network,
     payload: {
-      ...unsignedPaymentHeader.payload,
       signature,
+      authorization: unsignedPaymentHeader.payload.authorization as any, // Type assertion needed
     },
   };
+  return result;
 }
 
 /**
@@ -83,8 +100,8 @@ export async function signPaymentHeader<transport extends Transport, chain exten
 export async function createPayment<transport extends Transport, chain extends Chain>(
   client: SignerWallet<chain, transport> | LocalAccount,
   x402Version: number,
-  paymentRequirements: PaymentRequirements,
-): Promise<PaymentPayload> {
+  paymentRequirements: PaymentRequirements & { scheme: "exact" },
+): Promise<PaymentPayload & { scheme: "exact" }> {
   const from = isSignerWallet(client) ? client.account!.address : client.address;
   const unsignedPaymentHeader = preparePaymentHeader(from, x402Version, paymentRequirements);
   return signPaymentHeader(client, paymentRequirements, unsignedPaymentHeader);
@@ -101,7 +118,7 @@ export async function createPayment<transport extends Transport, chain extends C
 export async function createPaymentHeader(
   client: SignerWallet | LocalAccount,
   x402Version: number,
-  paymentRequirements: PaymentRequirements,
+  paymentRequirements: PaymentRequirements & { scheme: "exact" },
 ): Promise<string> {
   const payment = await createPayment(client, x402Version, paymentRequirements);
   return encodePayment(payment);

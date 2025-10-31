@@ -1,0 +1,25 @@
+{
+  "name": "@x402/payment-contract",
+  "version": "1.0.0",
+  "description": "X402-SCALED Payment Smart Contract for batch settlement",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:amoy": "hardhat run scripts/deploy.ts --network polygon-amoy"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "hardhat": "^2.19.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "x402",
+    "payment",
+    "batch",
+    "scaled",
+    "smart-contract"
+  ],
+  "author": "",
+  "license": "MIT"
+}
