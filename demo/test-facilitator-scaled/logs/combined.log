@@ -1,0 +1,2 @@
+{"host":"localhost","level":"info","message":"Test Facilitator listening","port":3333,"service":"test-facilitator-scaled","timestamp":"2025-11-05 13:07:30","url":"http://localhost:3333"}
+{"enableSettlement":false,"level":"info","message":"Configuration loaded","paymentContract":"0x392AF0DD...","polygonAmoyRpc":"undefined...","service":"test-facilitator-scaled","timestamp":"2025-11-05 13:07:30","walletAddress":"undefined..."}

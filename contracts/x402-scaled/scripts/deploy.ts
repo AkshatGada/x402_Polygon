@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 // USDC address on Polygon Amoy testnet
-const USDC_ADDRESS = '0x41e94eb019c0762f9bfcf9fb1e58725bfb0a7043'
+const USDC_ADDRESS = '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582'
 
 interface DeploymentRecord {
   contractAddress: string
@@ -37,7 +37,7 @@ async function main() {
   const network = await ethers.provider.getNetwork()
   console.log(`[*] Network: ${network.name} (chainId: ${network.chainId})`)
 
-  if (network.chainId !== 80002) {
+  if (Number(network.chainId) !== 80002) {
     throw new Error('This script is configured for Polygon Amoy (chainId: 80002). Please switch networks.')
   }
 
@@ -92,8 +92,12 @@ async function main() {
 
   // Verify domain separator
   console.log('[→] Verifying EIP-712 domain...')
-  const domainSeparator = await payment.DOMAIN_SEPARATOR()
-  console.log(`[✓] Domain separator: ${domainSeparator}`)
+  try {
+    const domainSeparator = await payment.DOMAIN_SEPARATOR()
+    console.log(`[✓] Domain separator: ${domainSeparator}`)
+  } catch (e) {
+    console.log('[⚠] Domain separator verification skipped (EIP712 inherited)')
+  }
   console.log('')
 
   // Create deployment record

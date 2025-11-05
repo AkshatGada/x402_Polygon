@@ -82,7 +82,6 @@ describe('E2E: Deposit Flow', () => {
         {
           inputs: [
             { name: 'server', type: 'address' },
-            { name: 'token', type: 'address' },
             { name: 'amount', type: 'uint256' },
             { name: 'expiresBy', type: 'uint256' }
           ],
@@ -99,7 +98,6 @@ describe('E2E: Deposit Flow', () => {
         functionName: 'deposit',
         args: [
           TEST_SERVER_ADDRESS as Address,
-          '0x41e94eb019c0762f9bfcf9fb1e58725bfb0a7043' as Address, // USDC
           BigInt(TEST_AMOUNTS.deposit),
           BigInt(TEST_AMOUNTS.depositExpiry)
         ]

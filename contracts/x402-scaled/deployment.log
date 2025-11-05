@@ -1,0 +1,51 @@
+╔═══════════════════════════════════════════════════════════╗
+║  X402-SCALED Payment.sol Deployment to Polygon Amoy      ║
+╚═══════════════════════════════════════════════════════════╝
+
+[*] Deployer: 0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00
+[*] Network: polygon-amoy (chainId: 80002)
+[*] USDC Address: 0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582
+[✓] USDC contract verified
+
+[*] Gas price: 30000000063 wei
+
+[→] Deploying Payment.sol...
+[✓] Payment contract deployed to: 0x392AF0DD97E02dA033EbA5439c740B8e0E358164
+
+[*] Deployment TX: 0x60b54a32bcd149a0e7958b3d56423ff769d23dec84ceb0c16db340e9c0c28b20
+[*] Block: 28635200
+[*] Gas used: 1156710
+
+[→] Verifying EIP-712 domain...
+[⚠] Domain separator verification skipped (EIP712 inherited)
+
+[✓] Deployment record saved to: /Users/agada/x402_polygon/contracts/x402-scaled/.deployed-amoy.json
+
+╔═══════════════════════════════════════════════════════════╗
+║                   DEPLOYMENT SUMMARY                      ║
+╠═══════════════════════════════════════════════════════════╣
+║ Contract Address:  0x392AF0DD97E02dA033EbA5439c740B8e0E358164         ║
+║ Deployment TX:     0x60b54a32bcd149a0e7958b3d56423ff769d23dec84ceb0c1 ║
+║ Block:             28635200                                           ║
+║ Gas Used:          1156710                                            ║
+║ Network:           Polygon Amoy (80002)                               ║
+║ Token:             USDC                                               ║
+╠═══════════════════════════════════════════════════════════╣
+║                      NEXT STEPS                            ║
+╠═══════════════════════════════════════════════════════════╣
+║                                                            ║
+║ 1. Update PAYMENT_CONTRACT_ADDRESS in .env               ║
+║    0x392AF0DD97E02dA033EbA5439c740B8e0E358164
+║                                                            ║
+║ 2. Start the test facilitator:                           ║
+║    cd demo/test-facilitator-scaled                       ║
+║    npm install && npm start                              ║
+║                                                            ║
+║ 3. Run E2E tests:                                         ║
+║    npm run test:e2e                                       ║
+║                                                            ║
+║ 4. View on Polygonscan:                                  ║
+║    https://amoy.polygonscan.com/address/0x392AF0DD97E02dA033EbA5439c740B8e0E358164
+║                                                            ║
+╚═══════════════════════════════════════════════════════════╝
+

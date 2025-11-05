@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, Account, PublicClient, WalletClient, Chain } from 'viem'
+import { createPublicClient, createWalletClient, http, Account, PublicClient, WalletClient, Chain, getAddress } from 'viem'
 import { polygonAmoy } from 'viem/chains'
 import { privateKeyToAccount } from 'viem/accounts'
 import { Hex } from 'viem'
@@ -8,12 +8,12 @@ import { Hex } from 'viem'
  */
 
 // Test wallet (funded on testnet)
-export const TEST_PRIVATE_KEY = 'c54698db0aca65242f49e5e84485d859c0fa41ee7a075d741eaa811da4b441c9' as Hex
+export const TEST_PRIVATE_KEY = '0xc54698db0aca65242f49e5e84485d859c0fa41ee7a075d741eaa811da4b441c9' as Hex
 export const TEST_ACCOUNT = privateKeyToAccount(TEST_PRIVATE_KEY)
 export const TEST_WALLET_ADDRESS = '0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00'
 
 // Test server address (receiving payments)
-export const TEST_SERVER_ADDRESS = '0x742d35Cc6634C0532925a3b844Bc0e7595f97D67'
+export const TEST_SERVER_ADDRESS = getAddress('0x742d35cc6634c0532925a3b844bc0e7595f97d67')
 
 // Network configuration
 export const NETWORK_CONFIG = {
@@ -24,7 +24,7 @@ export const NETWORK_CONFIG = {
 
 // Token configuration
 export const USDC_CONFIG = {
-  address: '0x41e94eb019c0762f9bfcf9fb1e58725bfb0a7043',
+  address: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
   name: 'USDC',
   decimals: 6
 }
@@ -40,7 +40,7 @@ export let PAYMENT_CONTRACT_ADDRESS = process.env.PAYMENT_CONTRACT_ADDRESS || ''
 
 // Test amounts
 export const TEST_AMOUNTS = {
-  deposit: '100000000', // 100 USDC (100 * 10^6)
+  deposit: '50000000', // 50 USDC (50 * 10^6)
   perRequest: '1000000', // 1 USDC per request
   depositExpiry: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60 // 30 days
 }

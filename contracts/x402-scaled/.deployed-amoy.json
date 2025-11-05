@@ -1,0 +1,17 @@
+{
+  "contractAddress": "0x392AF0DD97E02dA033EbA5439c740B8e0E358164",
+  "deploymentTx": "0x60b54a32bcd149a0e7958b3d56423ff769d23dec84ceb0c16db340e9c0c28b20",
+  "deploymentBlock": 28635200,
+  "timestamp": "2025-11-05T07:36:40.161Z",
+  "network": "polygon-amoy",
+  "tokenAddress": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+  "gasUsed": "1156710",
+  "gasPrice": "30000000063",
+  "deployer": "0xCA3953e536bDA86D1F152eEfA8aC7b0C82b6eC00",
+  "domain": {
+    "name": "X402Payment",
+    "version": "1",
+    "chainId": 80002,
+    "verifyingContract": "0x392AF0DD97E02dA033EbA5439c740B8e0E358164"
+  }
+}
