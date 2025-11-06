@@ -5,6 +5,9 @@ import {
   PaymentRequirementsSelector,
   selectPaymentRequirements,
 } from "x402/client";
+import { Address } from "viem";
+import { signatureStorage } from "x402/facilitator";
+import { exact } from "x402/schemes";
 
 /**
  * Enables the payment of APIs using the x402 payment protocol.
@@ -103,6 +106,36 @@ export function wrapFetchWithPayment(
     };
 
     const secondResponse = await fetch(input, newInit);
+    
+    // If the request succeeded (200-299 status) and it was an exact-scaled payment,
+    // update the client-side signature storage with the totalValue we just used
+    if (
+      secondResponse.ok &&
+      selectedPaymentRequirements.scheme === "exact-scaled" &&
+      selectedPaymentRequirements.paymentContract
+    ) {
+      try {
+        const decoded = exact.evm.decodePayment(paymentHeader);
+        if (decoded.scheme === "exact-scaled") {
+          // Extract the client address
+          const clientAddress = "account" in walletClient && walletClient.account
+            ? walletClient.account.address
+            : (walletClient as any).address;
+          
+          // Update client-side storage with the totalValue we just used
+          signatureStorage.storeSignature(
+            clientAddress as Address,
+            decoded.payload.authorization.to as Address,
+            decoded.payload.authorization.totalValue,
+            decoded.payload.signature
+          );
+        }
+      } catch (error) {
+        // Silently fail if we can't update storage - the request succeeded
+        console.debug("Failed to update signature storage:", error);
+      }
+    }
+    
     return secondResponse;
   };
 }
