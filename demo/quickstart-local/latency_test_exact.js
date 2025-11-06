@@ -23,7 +23,7 @@ const ITERATIONS = parseInt(process.env.ITERATIONS || "5");
 
 async function runTest() {
   const latencies = [];
-  
+
   for (let i = 1; i <= ITERATIONS; i++) {
     const startTime = performance.now();
     try {
