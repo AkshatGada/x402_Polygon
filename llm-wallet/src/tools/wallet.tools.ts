@@ -157,6 +157,142 @@ export const walletTools = [
         }]
       };
     }
+  },
+
+  {
+    name: 'wallet_set_active',
+    description: 'Set the active wallet for this LLM environment',
+    inputSchema: {
+      walletAddress: z.string().describe('Wallet address (0x...) to set as active'),
+      alias: z.string().optional().describe('Optional: Memorable name for this wallet in this environment')
+    },
+    async handler(args: { walletAddress: string; alias?: string }) {
+      try {
+        // Verify wallet exists
+        await StorageService.getWallet(args.walletAddress);
+
+        // Set as active for this environment
+        await StorageService.setActiveWalletForEnvironment(args.walletAddress);
+
+        const envInfo = await StorageService.getEnvironmentInfo();
+
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              message: `Wallet ${args.walletAddress} set as active for environment "${envInfo.environmentId}"`,
+              activeWallet: {
+                address: args.walletAddress,
+                alias: args.alias,
+                environment: envInfo.environmentId
+              }
+            }, null, 2)
+          }]
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: error instanceof Error ? error.message : 'Failed to set active wallet'
+            }, null, 2)
+          }],
+          isError: true
+        };
+      }
+    }
+  },
+
+  {
+    name: 'wallet_list',
+    description: 'List all wallets and environment information',
+    inputSchema: {},
+    async handler() {
+      try {
+        const envInfo = await StorageService.getEnvironmentInfo();
+
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              environment: {
+                id: envInfo.environmentId,
+                activeWallet: envInfo.activeWallet
+                  ? {
+                      address: envInfo.activeWallet.address,
+                      label: envInfo.activeWallet.label,
+                      createdAt: new Date(envInfo.activeWallet.createdAt).toISOString()
+                    }
+                  : null
+              },
+              accessibleWallets: envInfo.accessibleWallets.map(w => ({
+                address: w.address,
+                label: w.label,
+                network: w.network,
+                createdAt: new Date(w.createdAt).toISOString(),
+                accessibleBy: w.accessibleBy || ['all'],
+                isActive: w.address === envInfo.activeWallet?.address
+              }))
+            }, null, 2)
+          }]
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              error: error instanceof Error ? error.message : 'Failed to list wallets'
+            }, null, 2)
+          }],
+          isError: true
+        };
+      }
+    }
+  },
+
+  {
+    name: 'wallet_share',
+    description: 'Share a wallet with another LLM environment (e.g., share Claude wallet with Cursor)',
+    inputSchema: {
+      walletAddress: z.string().describe('Wallet address to share'),
+      targetEnvironment: z.string().describe('Target environment ID (e.g., "claude", "cursor", "chatgpt")')
+    },
+    async handler(args: { walletAddress: string; targetEnvironment: string }) {
+      try {
+        // Verify wallet exists
+        await StorageService.getWallet(args.walletAddress);
+
+        // Share wallet
+        await StorageService.shareWalletWithEnvironment(args.walletAddress, args.targetEnvironment);
+
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              message: `Wallet ${args.walletAddress} is now accessible to environment "${args.targetEnvironment}"`,
+              sharedWallet: {
+                address: args.walletAddress,
+                sharedWith: args.targetEnvironment
+              }
+            }, null, 2)
+          }]
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: error instanceof Error ? error.message : 'Failed to share wallet'
+            }, null, 2)
+          }],
+          isError: true
+        };
+      }
+    }
   }
 ];
 

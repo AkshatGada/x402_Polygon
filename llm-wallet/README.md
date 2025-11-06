@@ -4,9 +4,10 @@ Universal MCP (Model Context Protocol) server providing wallet capabilities and 
 
 ## What This MCP Server Does
 
-This server provides **18 MCP tools** that allow AI agents to:
+This server provides **21 MCP tools** that allow AI agents to:
 - **Create and manage encrypted wallets** (HD wallets with private key encryption)
-- **Check balance** across networks (Polygon , Polygon Amoy)
+- **Persistent wallet context** across sessions and environments (Claude, Cursor, ChatGPT, etc.)
+- **Check balance** across networks (Polygon, Polygon Amoy)
 - **Make automatic micropayments** to x402-protected APIs
 - **Enforce spending limits** (per-transaction and daily caps)
 - **Track payment history** and transaction logs
@@ -47,14 +48,73 @@ This server provides **18 MCP tools** that allow AI agents to:
 ```
 
 ### Step 2: Verify Installation
-In your MCP client, you should now see **18 tools** available:
-- 4 wallet management tools
+In your MCP client, you should now see **21 tools** available:
+- 7 wallet management tools (including environment-aware wallet switching)
 - 2 spending limit tools  
 - 2 x402 buyer tools
 - 5 x402 seller tools
 - 4 dynamic API tools
+- 1 network configuration tool
 
 > **⚠️ Development Notice**: This package is still in development. Please prefer to use on testnet (polygon-amoy) or if using on mainnet, use only small amounts. Do not use in production environments.
+
+## 🎯 Environment-Aware Wallets
+
+One of the key features of this MCP server is **persistent wallet context across sessions and environments**.
+
+### The Problem It Solves
+Previously, if you used the wallet in Claude on Day 1 and came back on Day 3, the wallet context would be lost. Each environment (Claude, Cursor, ChatGPT) had no memory of which wallet it was using, causing decryption failures.
+
+### The Solution
+The server now automatically:
+- ✅ Detects which environment you're in (Claude, Cursor, ChatGPT, VSCode, etc.)
+- ✅ Remembers the active wallet for that environment across sessions
+- ✅ Allows sharing wallets between environments
+- ✅ Provides tools to switch between wallets seamlessly
+
+### Quick Start: Environment Wallets
+
+**Check which environment you're in and which wallet is active:**
+```bash
+# In any LLM environment
+@LLM Wallet list all wallets
+```
+
+**Response shows:**
+- Your environment ID (e.g., "claude", "cursor")
+- Active wallet for this environment
+- All wallets accessible to you
+
+**Switch to a different wallet (in same environment):**
+```bash
+@LLM Wallet set active wallet to 0x1234567890abcdef...
+```
+
+**Share a wallet with another environment:**
+```bash
+@LLM Wallet share wallet 0x1234... with cursor
+```
+
+For detailed documentation, see [ENVIRONMENT_WALLETS.md](./ENVIRONMENT_WALLETS.md).
+
+### Examples
+
+**Day 1 (Claude):**
+- Create wallet 0x1111...
+- System remembers: Claude uses 0x1111...
+
+**Day 3 (Claude again - 2 days later):**
+- Wallet context restored automatically
+- Claude still uses 0x1111... ✅
+
+**Day 2 (Switch to Cursor):**
+- Create wallet 0x2222... in Cursor
+- Cursor remembers: I use 0x2222...
+- Claude still uses 0x1111...
+
+**Sharing wallets between environments:**
+- In Claude: `wallet_share(0x1111, "cursor")`
+- In Cursor: Can now use Claude's 0x1111 wallet too
 
 ## Complete Buyer-Side Flow Example
 
@@ -210,11 +270,14 @@ Call the weather_api tool with location "London"
 
 ## Complete Tool Reference
 
-### Wallet Management (4 tools)
+### Wallet Management (7 tools)
 - **`wallet_create`** - Create new HD wallet with encrypted storage
 - **`wallet_import`** - Import existing wallet from private key
 - **`wallet_balance`** - Check USDC and native token balance
 - **`wallet_history`** - View payment and transaction history
+- **`wallet_list`** - List all wallets accessible to current environment
+- **`wallet_set_active`** - Switch active wallet for this environment
+- **`wallet_share`** - Share a wallet with another LLM environment
 
 ### Spending Limits (2 tools)
 - **`wallet_set_limit`** - Set per-transaction and daily spending caps
