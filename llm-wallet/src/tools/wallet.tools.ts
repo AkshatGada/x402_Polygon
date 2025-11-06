@@ -293,6 +293,65 @@ export const walletTools = [
         };
       }
     }
+  },
+
+  {
+    name: 'wallet_delete',
+    description: 'Delete a specific wallet permanently',
+    inputSchema: {
+      walletAddress: z.string().describe('Wallet address (0x...) to delete')
+    },
+    async handler(args: { walletAddress: string }) {
+      try {
+        // Verify wallet exists
+        const wallet = await StorageService.getWallet(args.walletAddress);
+
+        // Get current active wallet
+        const activeWallet = await StorageService.getActiveWallet();
+
+        // Prevent deletion of the currently active wallet
+        if (activeWallet.address.toLowerCase() === args.walletAddress.toLowerCase()) {
+          return {
+            content: [{
+              type: 'text',
+              text: JSON.stringify({
+                success: false,
+                error: 'Cannot delete the currently active wallet. Set another wallet as active first using wallet_set_active.'
+              }, null, 2)
+            }],
+            isError: true
+          };
+        }
+
+        // Delete the wallet
+        await StorageService.deleteWallet(args.walletAddress);
+
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              message: `Wallet ${args.walletAddress} has been permanently deleted`,
+              deletedWallet: {
+                address: args.walletAddress,
+                label: wallet.label
+              }
+            }, null, 2)
+          }]
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: error instanceof Error ? error.message : 'Failed to delete wallet'
+            }, null, 2)
+          }],
+          isError: true
+        };
+      }
+    }
   }
 ];
 
