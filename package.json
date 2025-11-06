@@ -2,6 +2,6 @@
   "private": true,
   "packageManager": "pnpm@10.7.0",
   "dependencies": {
-    "llm-wallet-mcp": "^1.5.0"
+    "llm-wallet-mcp": "^1.6.6"
   }
 }

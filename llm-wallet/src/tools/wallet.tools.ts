@@ -221,10 +221,10 @@ export const walletTools = [
                 id: envInfo.environmentId,
                 activeWallet: envInfo.activeWallet
                   ? {
-                      address: envInfo.activeWallet.address,
-                      label: envInfo.activeWallet.label,
-                      createdAt: new Date(envInfo.activeWallet.createdAt).toISOString()
-                    }
+                    address: envInfo.activeWallet.address,
+                    label: envInfo.activeWallet.label,
+                    createdAt: new Date(envInfo.activeWallet.createdAt).toISOString()
+                  }
                   : null
               },
               accessibleWallets: envInfo.accessibleWallets.map(w => ({

@@ -70,7 +70,7 @@ export class StorageService {
     const wallets = await this.getWallets();
     const initialLength = wallets.length;
     const filteredWallets = wallets.filter(w => w.address.toLowerCase() !== address.toLowerCase());
-    
+
     if (filteredWallets.length === initialLength) {
       throw new Error(`Wallet not found: ${address}`);
     }
@@ -78,7 +78,7 @@ export class StorageService {
     // Delete wallet limits if they exist
     const allLimits = await this.getAllLimits();
     delete allLimits[address.toLowerCase()];
-    
+
     // Update wallets and limits files
     await fs.writeFile(StorageService.WALLETS_FILE, JSON.stringify(filteredWallets, null, 2));
     await fs.writeFile(StorageService.LIMITS_FILE, JSON.stringify(allLimits, null, 2));
