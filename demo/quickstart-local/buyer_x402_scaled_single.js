@@ -45,7 +45,7 @@ fetchWithPayment(url, {
   .then(async response => {
     const elapsedTime = Date.now() - startTime;
     const body = await response.json();
-    
+
     console.log("════════════════════════════════════════════════════════════════");
     console.log("✅ SUCCESS");
     console.log("════════════════════════════════════════════════════════════════");
@@ -57,7 +57,7 @@ fetchWithPayment(url, {
     console.log("");
     console.log("📋 Response Headers:");
     console.log(JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
-    
+
     if (body.report) {
       const rawPaymentResponse = response.headers.get("x-payment-response");
       if (rawPaymentResponse) {
