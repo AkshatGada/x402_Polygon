@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { join } from 'path';
 import { homedir } from 'os';
 import { randomBytes } from 'crypto';
+import { promises as fs } from 'fs';
+import { existsSync } from 'fs';
 
 dotenvConfig();
 
@@ -38,8 +40,45 @@ export const NETWORKS = {
 // Parse environment variables
 const rawConfig = ConfigSchema.parse(process.env);
 
-// Auto-generate encryption key if not provided
-const encryptionKey = rawConfig.WALLET_ENCRYPTION_KEY || randomBytes(32).toString('hex');
+// Function to get or create a persistent encryption key
+function getOrCreateEncryptionKey(): string {
+  const storageDir = rawConfig.STORAGE_DIR || join(homedir(), '.llm-wallet');
+  const keyFile = join(storageDir, '.encryption-key');
+
+  // If WALLET_ENCRYPTION_KEY is explicitly set in env, use it
+  if (rawConfig.WALLET_ENCRYPTION_KEY) {
+    return rawConfig.WALLET_ENCRYPTION_KEY;
+  }
+
+  // Check if key file exists
+  if (existsSync(keyFile)) {
+    try {
+      const key = require('fs').readFileSync(keyFile, 'utf-8').trim();
+      if (key.length >= 32) {
+        return key;
+      }
+    } catch (error) {
+      console.error('Failed to read encryption key file, generating new one:', error);
+    }
+  }
+
+  // Generate new key
+  const newKey = randomBytes(32).toString('hex');
+
+  // Try to persist the key (non-blocking)
+  try {
+    require('fs').mkdirSync(storageDir, { recursive: true });
+    require('fs').writeFileSync(keyFile, newKey, { mode: 0o600 });
+    console.error(`Encryption key persisted to ${keyFile}`);
+  } catch (error) {
+    console.error('Warning: Could not persist encryption key to disk:', error);
+  }
+
+  return newKey;
+}
+
+// Get or create encryption key
+const encryptionKey = getOrCreateEncryptionKey();
 
 // Get network configuration
 const network = rawConfig.NETWORK;

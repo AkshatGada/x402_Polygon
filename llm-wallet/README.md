@@ -47,6 +47,42 @@ This server provides **21 MCP tools** that allow AI agents to:
 }
 ```
 
+### Step 1.5: Encryption Key Persistence (Automatic ✅)
+
+The MCP server **automatically handles encryption key management**:
+
+#### How It Works
+- **First startup**: If no `WALLET_ENCRYPTION_KEY` is provided, the server generates a random 256-bit key
+- **Key is persisted**: The key is automatically saved to `~/.llm-wallet/.encryption-key` with restricted permissions
+- **Automatic recovery**: On subsequent startups, the same key is loaded, allowing wallet decryption
+- **No manual setup needed**: Wallets work across sessions automatically
+
+#### Optional: Use Your Own Encryption Key
+
+If you want to use a custom encryption key (for better security control):
+
+```json
+{
+  "mcpServers": {
+    "LLM Wallet": {
+      "command": "npx",
+      "args": ["llm-wallet-mcp@latest"],
+      "env": {
+        "NETWORK": "polygon-amoy",
+        "WALLET_ENCRYPTION_KEY": "your-32-character-minimum-secret-key-here1234567890ab"
+      }
+    }
+  }
+}
+```
+
+**Requirements:**
+- Must be at least 32 characters long
+- Must never change (changing it makes existing wallets inaccessible)
+- Keep it secret (don't commit to version control)
+
+⚠️ **Important**: Once you set a custom key, keep it safe. If lost or changed, all encrypted wallets become permanently inaccessible.
+
 ### Step 2: Verify Installation
 In your MCP client, you should now see **21 tools** available:
 - 7 wallet management tools (including environment-aware wallet switching)
