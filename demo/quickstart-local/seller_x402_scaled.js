@@ -32,10 +32,10 @@ app.use(paymentMiddleware(
     "GET /weather": {
       price: "$0.001",  // USDC amount per request
       network: NETWORK,
-      scheme: "exact-scaled",  // Use X402-SCALED scheme
-      paymentContract: PAYMENT_CONTRACT_ADDRESS,
-      maxAmountLockRequired: "100000000",  // 100 USDC
       config: {
+        scheme: "exact-scaled",  // Use X402-SCALED scheme
+        paymentContract: PAYMENT_CONTRACT_ADDRESS,
+        maxAmountLockRequired: "100000000",  // 100 USDC
         description: "Get current weather data",
         inputSchema: {
           type: "object",

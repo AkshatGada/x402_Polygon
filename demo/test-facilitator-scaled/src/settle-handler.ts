@@ -224,7 +224,7 @@ export async function handleSettle(
           vrs.s
         ],
         chain: polygonAmoy as Chain,
-        account: walletCli.account
+        account: walletCli.account!
       }) as Hex
     } catch (error) {
       logger.error('Settlement transaction submission failed', {

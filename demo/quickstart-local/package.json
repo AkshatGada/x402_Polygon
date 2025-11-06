@@ -19,9 +19,9 @@
     "node-fetch": "^3.3.2",
     "thirdweb": "^5.0.0",
     "viem": "^2.37.6",
-    "x402": "^0.6.5",
-    "x402-express": "^0.6.5",
-    "x402-fetch": "^0.6.0"
+    "x402": "file:../../typescript/packages/x402",
+    "x402-express": "file:../../typescript/packages/x402-express",
+    "x402-fetch": "file:../../typescript/packages/x402-fetch"
   },
   "devDependencies": {
     "http-server": "^14.1.1",

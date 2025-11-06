@@ -3,7 +3,7 @@ import {
   createPublicClient,
   http,
   PublicClient,
-  verifyTypedData,
+  recoverTypedDataAddress,
   Address,
   getAddress
 } from 'viem'
@@ -102,8 +102,7 @@ async function verifyEIP712Signature(
       }
     }
 
-    const recovered = await verifyTypedData({
-      address: getAddress(authorization.from),
+    const recovered = await recoverTypedDataAddress({
       signature: signature as `0x${string}`,
       ...typedData
     })
