@@ -4,7 +4,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { randomBytes } from 'crypto';
 import { promises as fs } from 'fs';
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
 
 dotenvConfig();
 
@@ -53,8 +53,9 @@ function getOrCreateEncryptionKey(): string {
   // Check if key file exists
   if (existsSync(keyFile)) {
     try {
-      const key = require('fs').readFileSync(keyFile, 'utf-8').trim();
+      const key = readFileSync(keyFile, 'utf-8').trim();
       if (key.length >= 32) {
+        console.error(`Encryption key loaded from ${keyFile}`);
         return key;
       }
     } catch (error) {
@@ -65,10 +66,10 @@ function getOrCreateEncryptionKey(): string {
   // Generate new key
   const newKey = randomBytes(32).toString('hex');
 
-  // Try to persist the key (non-blocking)
+  // Try to persist the key
   try {
-    require('fs').mkdirSync(storageDir, { recursive: true });
-    require('fs').writeFileSync(keyFile, newKey, { mode: 0o600 });
+    mkdirSync(storageDir, { recursive: true });
+    writeFileSync(keyFile, newKey, { mode: 0o600 });
     console.error(`Encryption key persisted to ${keyFile}`);
   } catch (error) {
     console.error('Warning: Could not persist encryption key to disk:', error);
