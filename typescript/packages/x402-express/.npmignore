@@ -1,0 +1,28 @@
+# Source files (only ship dist)
+src/
+*.test.ts
+*.test.js
+
+# Development files
+.turbo/
+node_modules/
+.env
+.env.*
+*.log
+
+# Config files
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+eslint.config.js
+.prettierrc
+.prettierignore
+
+# Documentation (keep README.md)
+ASYNC_SETTLEMENT_SUMMARY.md
+PACKAGE_REVIEW.md
+
+# Git
+.git/
+.gitignore
+

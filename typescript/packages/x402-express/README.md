@@ -1,11 +1,46 @@
-# x402-express
+# x402-express-async
 
-Express middleware integration for the x402 Payment Protocol. This package allows you to easily add paywall functionality to your Express.js applications using the x402 protocol.
+Express middleware integration for the x402 Payment Protocol with **asynchronous settlement** for ultra-low latency response times.
+
+## ⚠️ Important Differences from Standard x402-express
+
+This package implements **asynchronous settlement**, which means:
+
+- ✅ **Faster Response**: Resources are served immediately after verification (no settlement delay)
+- ❌ **No X-PAYMENT-RESPONSE Header**: Transaction hash is NOT returned in the response
+- ⚠️ **Settlement happens in background**: Check server logs for settlement status
+
+**Use this package when:**
+- Low latency is critical (APIs, real-time services)
+- You have server-side settlement monitoring
+- Clients don't need immediate transaction proof
+
+**Use standard x402-express when:**
+- Clients need transaction hash in response
+- Full x402 protocol compliance required
+- Settlement proof is critical for your use case
+
+## Comparison: Async vs Standard Settlement
+
+| Feature | x402-express-async (This Package) | x402-express (Standard) |
+|---------|----------------------------------|------------------------|
+| Response Time | ⚡ Fast (verification only) | Slower (verification + settlement) |
+| X-PAYMENT-RESPONSE Header | ❌ Not included | ✅ Included with transaction hash |
+| Settlement | 🔄 Async (background) | ⏱️ Synchronous (blocking) |
+| Client Gets TX Hash | ❌ No | ✅ Yes |
+| Server Logs Settlement | ✅ Yes | ✅ Yes |
+| x402 Protocol Compliant | ⚠️ Partial | ✅ Full |
+| Best For | Low-latency APIs, Real-time | Standard apps, Compliance |
 
 ## Installation
 
 ```bash
-npm install x402-express
+npm install x402-express-async
+```
+
+Or if using the local version from this repo:
+```bash
+npm install ../../typescript/packages/x402-express
 ```
 
 ## Quick Start
@@ -39,6 +74,47 @@ app.get("/protected-route",
 
 app.listen(3000);
 ```
+
+## Payment Flow
+
+The x402-express middleware implements an asynchronous payment settlement flow:
+
+1. **Verification**: Payment is verified before serving the resource
+2. **Resource Delivery**: The protected resource is served immediately after verification
+3. **Async Settlement**: Payment settlement happens in the background (fire-and-forget)
+
+### Key Characteristics
+
+- **Non-blocking**: Clients receive the resource immediately after payment verification, without waiting for settlement
+- **No X-PAYMENT-RESPONSE header**: Since settlement happens after the response is sent, the `X-PAYMENT-RESPONSE` header is not included
+- **Error Handling**: Settlement failures are logged to the console for monitoring but don't affect the client response
+- **Production Considerations**: Failed settlements can be handled by:
+  - Monitoring the error logs
+  - Implementing a retry mechanism
+  - Storing failed settlements for manual review
+
+### Settlement Error Logs
+
+When settlement fails, the middleware logs detailed error information:
+
+```javascript
+{
+  error: "Error message",
+  payer: "0x...",
+  resource: "https://example.com/protected",
+  network: "base-sepolia",
+  settlementTime: "1523ms"
+}
+```
+
+### Disabling Settlement Logs
+
+Set environment variable to disable successful settlement logs:
+```bash
+X402_LOG_SETTLEMENT=false
+```
+
+Error logs are always shown.
 
 ## Configuration
 

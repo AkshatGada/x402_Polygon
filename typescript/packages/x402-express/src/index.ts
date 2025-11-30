@@ -17,7 +17,6 @@ import {
   PaywallConfig,
   Resource,
   RoutesConfig,
-  settleResponseHeader,
 } from "x402/types";
 import { useFacilitator } from "x402/verify";
 
@@ -227,52 +226,40 @@ export function paymentMiddleware(
       return;
     }
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    type EndArgs =
-      | [cb?: () => void]
-      | [chunk: any, cb?: () => void]
-      | [chunk: any, encoding: BufferEncoding, cb?: () => void];
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-
-    const originalEnd = res.end.bind(res);
-    let endArgs: EndArgs | null = null;
-
-    res.end = function (...args: EndArgs) {
-      endArgs = args;
-      return res; // maintain correct return type
-    };
-
     // Proceed to the next middleware or route handler
     await next();
 
-    // If the response from the protected route is >= 400, do not settle payment
-    if (res.statusCode >= 400) {
-      res.end = originalEnd;
-      if (endArgs) {
-        originalEnd(...(endArgs as Parameters<typeof res.end>));
-      }
-      return;
-    }
-
-    try {
-      const settleResponse = await settle(decodedPayment, selectedPaymentRequirements);
-      const responseHeader = settleResponseHeader(settleResponse);
-      res.setHeader("X-PAYMENT-RESPONSE", responseHeader);
-    } catch (error) {
-      // If settlement fails and the response hasn't been sent yet, return an error
-      if (!res.headersSent) {
-        res.status(402).json({
-          x402Version,
-          error,
-          accepts: toJsonSafe(paymentRequirements),
-        });
-        return;
-      }
-    } finally {
-      res.end = originalEnd;
-      if (endArgs) {
-        originalEnd(...(endArgs as Parameters<typeof res.end>));
-      }
+    // Asynchronously settle payment after serving the resource (fire-and-forget)
+    // Settlement happens in the background and doesn't block the response
+    if (res.statusCode < 400) {
+      const settleStartTime = Date.now();
+      setImmediate(async () => {
+        try {
+          await settle(decodedPayment, selectedPaymentRequirements);
+          const settleDuration = Date.now() - settleStartTime;
+          if (process.env.X402_LOG_SETTLEMENT !== "false") {
+            console.log("[x402-express] Payment settled successfully:", {
+              payer: decodedPayment.payload.authorization.from,
+              resource: resourceUrl,
+              network: selectedPaymentRequirements.network,
+              settlementTime: `${settleDuration}ms`,
+            });
+          }
+        } catch (error) {
+          const settleDuration = Date.now() - settleStartTime;
+          console.error("[x402-express] Payment settlement failed:", {
+            error: error instanceof Error ? error.message : error,
+            payer: decodedPayment.payload.authorization.from,
+            resource: resourceUrl,
+            network: selectedPaymentRequirements.network,
+            settlementTime: `${settleDuration}ms`,
+          });
+          // In production, this could trigger:
+          // - Retry mechanism
+          // - Alert/monitoring system
+          // - Store failed settlement for manual review
+        }
+      });
     }
   };
 }

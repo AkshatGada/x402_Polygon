@@ -6,8 +6,10 @@
   "scripts": {
     "start:seller": "node seller_x402.js",
     "start:seller:router": "node seller_x402_with_router.js",
+    "start:seller:async": "node seller_async_test.js",
     "run:buyer": "node buyer_x402.js",
-    "test:endpoints": "node test_endpoints.js"
+    "test:endpoints": "node test_endpoints.js",
+    "test:async": "node test_async_latency.js"
   },
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.38.3",

@@ -1,6 +1,6 @@
 {
-  "name": "x402-express",
-  "version": "0.5.2",
+  "name": "x402-express-async",
+  "version": "1.0.0",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
@@ -15,11 +15,33 @@
     "lint": "eslint . --ext .ts --fix",
     "lint:check": "eslint . --ext .ts"
   },
-  "keywords": [],
+  "keywords": [
+    "x402",
+    "payment",
+    "express",
+    "middleware",
+    "async",
+    "blockchain",
+    "usdc",
+    "polygon",
+    "base",
+    "web3",
+    "paywall",
+    "micropayments",
+    "crypto",
+    "evm"
+  ],
   "license": "Apache-2.0",
-  "author": "Coinbase Inc.",
-  "repository": "https://github.com/coinbase/x402",
-  "description": "x402 Payment Protocol",
+  "author": "Agada <agada@polygon.technology>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agadajerry/x402-express-async.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agadajerry/x402-express-async/issues"
+  },
+  "homepage": "https://github.com/agadajerry/x402-express-async#readme",
+  "description": "Express middleware for x402 Payment Protocol with asynchronous settlement for ultra-low latency",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@types/express": "^5.0.1",
@@ -42,7 +64,7 @@
     "@coinbase/cdp-sdk": "^1.22.0",
     "express": "^4.18.2",
     "viem": "^2.21.26",
-    "x402": "workspace:^",
+    "x402": "^0.5.2",
     "zod": "^3.24.2"
   },
   "exports": {
